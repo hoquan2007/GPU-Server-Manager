@@ -5,31 +5,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Định nghĩa cấu trúc dữ liệu cho một Máy chủ GPU (Node trong Danh sách liên kết)
+// Dinh nghia cau truc may chu (Node)
 typedef struct ServerNode {
-    int server_id;                  // Mã định danh máy chủ (duy nhất)
-    char gpu_model[50];             // Tên card đồ họa (VD: "RTX 5060", "A100")
-    int vram_total;                 // Tổng dung lượng VRAM (GB)
-    int vram_used;                  // VRAM đang sử dụng (GB) - phục vụ cấp phát model
-    char api_endpoint[100];         // Địa chỉ API endpoint (VD: "http://nextgpu.vn/api")
-    int status;                     // 1: Đang hoạt động, 0: Tạm dừng (Offline)
-    
-    // Con trỏ trỏ đến node tiếp theo (Cấu trúc tự trỏ - YÊU CẦU BẮT BUỘC CHƯƠNG 3)
-    struct ServerNode* next;        
+    int server_id;
+    char gpu_model[50];
+    int vram_total;
+    int vram_used;
+    char api_endpoint[100];
+    int status;
+    struct ServerNode* next; // Cau truc tu tro
 } ServerNode;
 
-// --- KHAI BÁO CÁC HÀM XỬ LÝ CORE (Sẽ cài đặt ở server_list.c) ---
-
-// 1. Cấp phát động một node máy chủ mới
+// Khai bao cac ham xu ly
 ServerNode* createServerNode(int id, const char* model, int vtotal, const char* endpoint);
-
-// 2. Thêm máy chủ vào danh sách (Thêm vào cuối)
 void addServer(ServerNode** head, int id, const char* model, int vtotal, const char* endpoint);
-
-// 3. Hiển thị danh sách toàn bộ máy chủ đang quản lý
 void displayServers(ServerNode* head);
-
-// 4. Giải phóng toàn bộ bộ nhớ (Tránh rò rỉ - YÊU CẦU BẮT BUỘC CHƯƠNG 2-3)
 void freeList(ServerNode** head);
+void deployAIModel(ServerNode* head, const char* ai_model_name, int required_vram);
 
 #endif // SERVER_LIST_H

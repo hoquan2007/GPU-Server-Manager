@@ -3,14 +3,14 @@
 #include "../include/server_list.h"
 #include "../include/file_io.h"
 
-// Hàm in Menu ra màn hình
 void printMenu() {
     printf("\n=========================================\n");
-    printf("   HE THONG QUAN LY MAY CHU GPU\n");
+    printf("   HE THONG QUAN LY HA TANG AI (GPU)\n");
     printf("=========================================\n");
-    printf("1. Hien thi danh sach may chu\n");
+    printf("1. Hien thi Dashboard ha tang (VRAM)\n");
     printf("2. Them may chu moi (Tu ban phim)\n");
-    printf("0. Thoat chuong trinh\n");
+    printf("3. Trien khai Model AI (Can bang tai)\n");
+    printf("0. Thoat chuong trinh & Luu du lieu\n");
     printf("=========================================\n");
     printf("Nhap lua chon cua ban: ");
 }
@@ -19,15 +19,14 @@ int main() {
     ServerNode* server_list = NULL;
     int choice;
 
-  loadFromFile(&server_list, "data/gpu_servers.dat");
+    loadFromFile(&server_list, "data/gpu_servers.dat");
 
     while (1) {
         printMenu();
         
-        // Kiem soat loi nhap lieu (Yeu cau chuong 5): Neu nguoi dung nhap chu cai thay vi so
         if (scanf("%d", &choice) != 1) {
             printf("\n[!] Loi: Vui long nhap mot so nguyen!\n");
-            while(getchar() != '\n'); // Xoa bo nho dem ban phim de tranh vong lap vo han
+            while(getchar() != '\n'); 
             continue;
         }
 
@@ -40,37 +39,54 @@ int main() {
                 char model[50], endpoint[100];
 
                 printf("\n--- THEM MAY CHU MOI ---\n");
-                
                 printf("Nhap ID may chu (So nguyen): ");
                 scanf("%d", &id);
-                while(getchar() != '\n'); // Xoa bo nho dem sau khi nhap so
+                while(getchar() != '\n');
 
                 printf("Nhap Model GPU (VD: RTX_5060): ");
-                scanf("%[^\n]", model);   // Doc chuoi co chua khoang trang
+                scanf("%[^\n]", model);   
                 while(getchar() != '\n');
 
                 printf("Nhap Tong VRAM (GB): ");
                 scanf("%d", &vtotal);
                 while(getchar() != '\n');
 
-                printf("Nhap API Endpoint (VD: http://nextgpu.vn/api/node4): ");
+                printf("Nhap API Endpoint (VD: http://nextgpu.vn/api/node): ");
                 scanf("%[^\n]", endpoint);
                 while(getchar() != '\n');
 
-                // Goi ham addServer de dua du lieu vua nhap vao Danh sach lien ket
                 addServer(&server_list, id, model, vtotal, endpoint);
-                printf("\n[i] Da them may chu %s thanh cong vao he thong!\n", model);
+                printf("\n[+] Da them may chu %s thanh cong vao he thong!\n", model);
                 break;
             }
-         
+            case 3: {
+                char ai_name[50];
+                int req_vram;
+                
+                printf("\n--- TRIEN KHAI MODEL AI ---\n");
+                printf("Nhap ten Model (VD: Qwen-31B): ");
+                
+               
+                scanf(" %[^\n]", ai_name); 
+                
+                while(getchar() != '\n');
+                
+                printf("Nhap dung luong VRAM yeu cau (GB): ");
+                scanf("%d", &req_vram);
+                while(getchar() != '\n');
+                
+                deployAIModel(server_list, ai_name, req_vram);
+                break;
+            }
             case 0:
-                printf("\nDang don dep bo nho...\n");
+                printf("\nDang luu du lieu...\n");
                 saveToFile(server_list, "data/gpu_servers.dat");
+                printf("Dang don dep bo nho...\n");
                 freeList(&server_list);
                 printf("He thong tat an toan. Tam biet!\n");
                 return 0;
             default:
-                printf("\n[!] Lua chon khong hop le. Vui long chon tu 0-2.\n");
+                printf("\n[!] Lua chon khong hop le. Vui long chon tu 0-3.\n");
         }
     }
 

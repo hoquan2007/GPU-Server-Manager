@@ -1,0 +1,9 @@
+[2026-05-08 18:29:19] SYSTEM: Nguoi dung khoi dong he thong NEXTGPU.
+[2026-05-08 18:30:13] INFO: Da them may chu ID 100100 (Model: AMD_200) vao ha tang.
+[2026-05-08 18:30:32] SYSTEM: Da chay thuat toan sap xep Server theo VRAM.
+[2026-05-08 18:30:44] WARNING: Da dao nguoc trang thai bao tri cho ID 100110.
+[2026-05-08 18:30:51] WARNING: Da dao nguoc trang thai bao tri cho ID 100100.
+[2026-05-08 18:30:59] WARNING: Da dao nguoc trang thai bao tri cho ID 100100.
+[2026-05-08 18:31:53] ACTION: Thuc thi lenh trien khai Model GEMINI 2.5 PRO (Yeu cau: 32 GB VRAM).
+[2026-05-08 18:31:57] SYSTEM: Da xuat bao cao du lieu ra file CSV.
+[2026-05-08 18:32:10] SYSTEM: He thong tat an toan. Da luu tru du lieu.

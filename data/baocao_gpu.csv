@@ -1,8 +1,9 @@
 ID,GPU Model,VRAM Total (GB),VRAM Used (GB),API Endpoint,Status
-1000110,RTX_5070,12,12,http://nextcup/api/node1,Online
-100112,RTX_5070,20,12,http://nextgpu.vn/api/node5,Online
-100123,RTX_4050,24,0,http://nextgpu.vn/api/node6,Online
-1001102,RTX_3050,4,0,http://nextgpu.vn/api/node7,Online
+100220,AMD_200,64,0,http://nextgpu.vn/api/node45,Online
+100100,AMD_200,54,32,http://nextgpu.vn/api/node5,Online
 100119,RTX_5080,32,0,http://nextgppu/api/node10,Online
 100117,RTX_5050,30,0,http://nextgpu/api/node21,Online
-100220,AMD_200,64,0,http://nextgpu.vn/api/node45,Online
+100123,RTX_4050,24,0,http://nextgpu.vn/api/node6,Online
+100112,RTX_5070,20,12,http://nextgpu.vn/api/node5,Online
+1000110,RTX_5070,12,12,http://nextcup/api/node1,Online
+1001102,RTX_3050,4,0,http://nextgpu.vn/api/node7,Online

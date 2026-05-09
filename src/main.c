@@ -3,11 +3,10 @@
 #include "../include/server_list.h"
 #include "../include/file_io.h"
 
-// Ham ho tro: Cho nguoi dung doc ket qua roi moi xoa man hinh
 void pauseAndClear() {
     printf("\n... Nhan ENTER de tro ve Menu chinh ...");
-    while(getchar() != '\n'); // Cho nguoi dung bam Enter
-    system("cls");            // Xoa sach man hinh (Dung cho Windows)
+    while(getchar() != '\n'); 
+    system("cls");            
 }
 
 void printMenu() {
@@ -18,11 +17,11 @@ void printMenu() {
     printf("  1. Hien thi Dashboard ha tang (VRAM)\n");
     printf("  2. Them may chu moi vao he thong\n");
     printf("  3. Trien khai Model AI (Can bang tai)\n");
-    printf("  4. Go bo may chu (Thanh ly)\n");
+    printf(YELLOW "  4. Go bo may chu (Thanh ly)\n" RESET);
     printf("  5. Sap xep may chu theo VRAM (Giam dan)\n");
-    printf("  6. Bao tri may chu (Chuyen trang thai Online/Offline)\n");
-    printf("  7. Xuat bao cao he thong (Dinh dang Excel/CSV)\n"); 
-    printf(YELLOW "  0. Thoat chuong trinh & Luu du lieu an toan\n" RESET);
+    printf(MAGENTA "  6. Bao tri may chu (Chuyen trang thai Online/Offline)\n" RESET);
+    printf(GREEN "  7. Xuat bao cao he thong (Dinh dang Excel/CSV)\n" RESET);
+    printf(RED "  0. Thoat chuong trinh & Luu du lieu an toan\n" RESET);
     printf(CYAN "--------------------------------------------------------\n" RESET);
     printf(BOLD " Nhap lua chon cua ban: " RESET);
 }
@@ -30,10 +29,13 @@ void printMenu() {
 int main() {
     ServerNode* server_list = NULL;
     int choice;
+    char log_buffer[200]; // Bien phu de tao chuoi ghi Log
 
-    // Lam sach man hinh luc moi bat len
     system("cls"); 
     loadFromFile(&server_list, "data/gpu_servers.dat");
+    
+    // Ghi Log ngay khi khoi dong
+    writeSystemLog("SYSTEM: Nguoi dung khoi dong he thong NEXTGPU.");
     pauseAndClear();
 
     while (1) {
@@ -65,9 +67,9 @@ int main() {
                         continue;
                     }
                     if (checkIdExists(server_list, id)) {
-                        printf("[!] Loi: Server ID %d da ton tai!\n", id);
+                        printf(RED "[!] Loi: Server ID %d da ton tai!\n" RESET, id);
                     } else if (id <= 0) {
-                        printf(RED "[!] Loi: ID phai lon hon 0!\n"RESET);
+                        printf(RED "[!] Loi: ID phai lon hon 0!\n" RESET);
                     } else break; 
                 }
 
@@ -84,7 +86,12 @@ int main() {
                 while(getchar() != '\n');
 
                 addServer(&server_list, id, model, vtotal, endpoint);
-                printf("\n[+] Da them may chu %s thanh cong!\n", model);
+                printf(GREEN "\n[+] Da them may chu %s thanh cong!\n" RESET, model);
+                
+                // GHI LOG
+                sprintf(log_buffer, "INFO: Da them may chu ID %d (Model: %s) vao ha tang.", id, model);
+                writeSystemLog(log_buffer);
+
                 pauseAndClear();
                 break;
             }
@@ -101,6 +108,11 @@ int main() {
                 while(getchar() != '\n');
                 
                 deployAIModel(server_list, ai_name, req_vram);
+                
+                // GHI LOG
+                sprintf(log_buffer, "ACTION: Thuc thi lenh trien khai Model %s (Yeu cau: %d GB VRAM).", ai_name, req_vram);
+                writeSystemLog(log_buffer);
+
                 pauseAndClear();
                 break;
             }
@@ -111,8 +123,12 @@ int main() {
                 if (scanf("%d", &del_id) == 1) {
                     while(getchar() != '\n');
                     deleteServer(&server_list, del_id);
+                    
+                    // GHI LOG
+                    sprintf(log_buffer, "WARNING: Thanh ly/Xoa may chu ID %d khoi he thong.", del_id);
+                    writeSystemLog(log_buffer);
                 } else {
-                    printf("[!] Loi nhap lieu!\n");
+                    printf(RED "[!] Loi nhap lieu!\n" RESET);
                     while(getchar() != '\n'); 
                 }
                 pauseAndClear();
@@ -120,6 +136,7 @@ int main() {
             }
             case 5:
                 sortServersByVRAM(server_list);
+                writeSystemLog("SYSTEM: Da chay thuat toan sap xep Server theo VRAM.");
                 pauseAndClear();
                 break;
             case 6: {
@@ -129,8 +146,12 @@ int main() {
                 if (scanf("%d", &toggle_id) == 1) {
                     while(getchar() != '\n');
                     toggleServerStatus(server_list, toggle_id);
+                    
+                    // GHI LOG
+                    sprintf(log_buffer, "WARNING: Da dao nguoc trang thai bao tri cho ID %d.", toggle_id);
+                    writeSystemLog(log_buffer);
                 } else {
-                    printf("[!] Loi nhap lieu!\n");
+                    printf(RED "[!] Loi nhap lieu!\n" RESET);
                     while(getchar() != '\n'); 
                 }
                 pauseAndClear();
@@ -139,6 +160,7 @@ int main() {
             case 7:
                 printf("\n--- XUAT BAO CAO HE THONG ---\n");
                 exportToCSV(server_list, "data/baocao_gpu.csv");
+                writeSystemLog("SYSTEM: Da xuat bao cao du lieu ra file CSV.");
                 pauseAndClear();
                 break;
             case 0:
@@ -147,9 +169,12 @@ int main() {
                 printf("Dang don dep bo nho...\n");
                 freeList(&server_list);
                 printf("He thong tat an toan. Tam biet!\n");
+                
+                // GHI LOG Cuoi cung truoc khi thoat
+                writeSystemLog("SYSTEM: He thong tat an toan. Da luu tru du lieu.");
                 return 0;
             default:
-                printf("\n[!] Lua chon khong hop le.\n");
+                printf(RED "\n[!] Lua chon khong hop le.\n" RESET);
                 pauseAndClear();
         }
     }

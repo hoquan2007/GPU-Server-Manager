@@ -21,6 +21,7 @@ void printMenu() {
     printf("  4. Go bo may chu (Thanh ly)\n");
     printf("  5. Sap xep may chu theo VRAM (Giam dan)\n");
     printf("  6. Bao tri may chu (Chuyen trang thai Online/Offline)\n");
+    printf("  7. Xuat bao cao he thong (Dinh dang Excel/CSV)\n"); 
     printf(YELLOW "  0. Thoat chuong trinh & Luu du lieu an toan\n" RESET);
     printf(CYAN "--------------------------------------------------------\n" RESET);
     printf(BOLD " Nhap lua chon cua ban: " RESET);
@@ -135,6 +136,11 @@ int main() {
                 pauseAndClear();
                 break;
             }
+            case 7:
+                printf("\n--- XUAT BAO CAO HE THONG ---\n");
+                exportToCSV(server_list, "data/baocao_gpu.csv");
+                pauseAndClear();
+                break;
             case 0:
                 printf("\nDang luu du lieu...\n");
                 saveToFile(server_list, "data/gpu_servers.dat");

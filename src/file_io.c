@@ -37,3 +37,36 @@ void loadFromFile(ServerNode** head, const char* filename) {
     fclose(file);
     printf("\n[i] Da nap du lieu tu %s thanh cong.\n", filename);
 }
+
+void exportToCSV(ServerNode* head, const char* filename) {
+    // Mo file o che do van ban "w" (Write)
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        printf(RED "\n[!] Loi: Khong the tao file bao cao %s\n" RESET, filename);
+        return;
+    }
+
+    // 1. Ghi dong tieu de (Header) cho Excel
+    // Dung dau phay de ngan cach cac cot
+    fprintf(file, "ID,GPU Model,VRAM Total (GB),VRAM Used (GB),API Endpoint,Status\n");
+
+    // 2. Duyet qua danh sach lien ket va ghi tung dong du lieu
+    ServerNode* temp = head;
+    int count = 0;
+    while (temp != NULL) {
+        fprintf(file, "%d,%s,%d,%d,%s,%s\n",
+                temp->server_id,
+                temp->gpu_model,
+                temp->vram_total,
+                temp->vram_used,
+                temp->api_endpoint,
+                (temp->status == 1) ? "Online" : "Offline");
+        
+        temp = temp->next;
+        count++;
+    }
+
+    fclose(file);
+    printf(GREEN "\n[+] THANH CONG: Da xuat bao cao %d may chu ra file '%s'!\n" RESET, count, filename);
+    printf(CYAN "[i] Ban co the mo file nay truc tiep bang Microsoft Excel hoac Google Sheets.\n" RESET);
+}

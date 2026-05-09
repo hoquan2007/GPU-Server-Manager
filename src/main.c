@@ -1,7 +1,52 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h> // Thu vien thoi gian
 #include "../include/server_list.h"
 #include "../include/file_io.h"
+
+// 1. Ham tao do tre (delay) an toan da nen tang
+void delay(int milliseconds) {
+    long pause = milliseconds * (CLOCKS_PER_SEC / 1000);
+    clock_t now, then;
+    now = then = clock();
+    while( (now - then) < pause )
+        now = clock();
+}
+
+// 2. Hieu ung Boot Hacker / Cyberpunk
+void showBootScreen() {
+    system("cls");
+    printf(CYAN "\n");
+    printf("  _   _ _______   _______ ____  ____  _   _ \n");
+    printf(" | \\ | |  ___\\ \\ / /_   _/ ___||  _ \\| | | |\n");
+    printf(" |  \\| | |__  \\ V /  | | \\___ \\| |_) | | | |\n");
+    printf(" | |\\  |  __|  > <   | |  ___) |  __/| |_| |\n");
+    printf(" |_| \\_|_|    /_/ \\_\\|_| |____/|_|    \\___/ \n");
+    printf(MAGENTA "                                PRO EDITION\n" RESET);
+    printf("\n");
+
+    printf(GREEN "[*] Dang khoi dong NEXTGPU Kernel...\n" RESET);
+    delay(500);
+    printf(GREEN "[*] Kiem tra phan cung cuc bo: Intel Core i7 13th, RTX 5060 8GB, 16GB RAM [OK]\n" RESET);
+    delay(600);
+    printf(GREEN "[*] Thiet lap ket noi co so du lieu...\n" RESET);
+    delay(400);
+    printf(GREEN "[*] Khoi tao module Can bang tai AI...\n" RESET);
+    delay(700);
+
+    // Hieu ung thanh Loading Bar chay tung nac
+    printf(YELLOW "\nDang nap he thong: \n[");
+    for(int i = 0; i < 25; i++) {
+        printf(CYAN "#" RESET);
+        fflush(stdout); // BÍ KÍP: Ep C in ky tu ra man hinh ngay lap tuc thay vi cho doi
+        delay(80);      // Toc do chay cua thanh loading
+    }
+    printf(YELLOW "] 100%%\n" RESET);
+    delay(500);
+
+    printf(GREEN "\n[+] BOOT THANH CONG! Truy cap giao dien quan tri...\n" RESET);
+    delay(1000);
+}
 
 void pauseAndClear() {
     printf("\n... Nhan ENTER de tro ve Menu chinh ...");
@@ -29,12 +74,14 @@ void printMenu() {
 int main() {
     ServerNode* server_list = NULL;
     int choice;
-    char log_buffer[200]; // Bien phu de tao chuoi ghi Log
+    char log_buffer[200];
 
+    // Chay hieu ung khoi dong TRUOC khi vao Menu
+    showBootScreen(); 
+    
+    // Xoa sach man hinh Boot de hien thi Menu gon gang
     system("cls"); 
     loadFromFile(&server_list, "data/gpu_servers.dat");
-    
-    // Ghi Log ngay khi khoi dong
     writeSystemLog("SYSTEM: Nguoi dung khoi dong he thong NEXTGPU.");
     pauseAndClear();
 
@@ -88,7 +135,6 @@ int main() {
                 addServer(&server_list, id, model, vtotal, endpoint);
                 printf(GREEN "\n[+] Da them may chu %s thanh cong!\n" RESET, model);
                 
-                // GHI LOG
                 sprintf(log_buffer, "INFO: Da them may chu ID %d (Model: %s) vao ha tang.", id, model);
                 writeSystemLog(log_buffer);
 
@@ -109,7 +155,6 @@ int main() {
                 
                 deployAIModel(server_list, ai_name, req_vram);
                 
-                // GHI LOG
                 sprintf(log_buffer, "ACTION: Thuc thi lenh trien khai Model %s (Yeu cau: %d GB VRAM).", ai_name, req_vram);
                 writeSystemLog(log_buffer);
 
@@ -124,7 +169,6 @@ int main() {
                     while(getchar() != '\n');
                     deleteServer(&server_list, del_id);
                     
-                    // GHI LOG
                     sprintf(log_buffer, "WARNING: Thanh ly/Xoa may chu ID %d khoi he thong.", del_id);
                     writeSystemLog(log_buffer);
                 } else {
@@ -147,7 +191,6 @@ int main() {
                     while(getchar() != '\n');
                     toggleServerStatus(server_list, toggle_id);
                     
-                    // GHI LOG
                     sprintf(log_buffer, "WARNING: Da dao nguoc trang thai bao tri cho ID %d.", toggle_id);
                     writeSystemLog(log_buffer);
                 } else {
@@ -170,7 +213,6 @@ int main() {
                 freeList(&server_list);
                 printf("He thong tat an toan. Tam biet!\n");
                 
-                // GHI LOG Cuoi cung truoc khi thoat
                 writeSystemLog("SYSTEM: He thong tat an toan. Da luu tru du lieu.");
                 return 0;
             default:

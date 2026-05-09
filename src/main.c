@@ -3,68 +3,71 @@
 #include "../include/server_list.h"
 #include "../include/file_io.h"
 
+// Ham ho tro: Cho nguoi dung doc ket qua roi moi xoa man hinh
+void pauseAndClear() {
+    printf("\n... Nhan ENTER de tro ve Menu chinh ...");
+    while(getchar() != '\n'); // Cho nguoi dung bam Enter
+    system("cls");            // Xoa sach man hinh (Dung cho Windows)
+}
+
 void printMenu() {
-    printf("\n=========================================\n");
-    printf("   HE THONG QUAN LY HA TANG AI (GPU)\n");
-    printf("=========================================\n");
-    printf("1. Hien thi Dashboard ha tang (VRAM)\n");
-    printf("2. Them may chu moi (Tu ban phim)\n");
-    printf("3. Trien khai Model AI (Can bang tai)\n");
-    printf("4. Go bo may chu (Bao tri/Thanh ly)\n");
-    printf("0. Thoat chuong trinh & Luu du lieu\n");
-    printf("=========================================\n");
-    printf("Nhap lua chon cua ban: ");
+    printf("\n");
+    printf(CYAN "========================================================\n" RESET);
+    printf(BOLD CYAN "        HE THONG QUAN LY HA TANG AI (NEXTGPU PRO)       \n" RESET);
+    printf(CYAN "========================================================\n" RESET);
+    printf("  1. Hien thi Dashboard ha tang (VRAM)\n");
+    printf("  2. Them may chu moi vao he thong\n");
+    printf("  3. Trien khai Model AI (Can bang tai)\n");
+    printf("  4. Go bo may chu (Thanh ly)\n");
+    printf("  5. Sap xep may chu theo VRAM (Giam dan)\n");
+    printf("  6. Bao tri may chu (Chuyen trang thai Online/Offline)\n");
+    printf(YELLOW "  0. Thoat chuong trinh & Luu du lieu an toan\n" RESET);
+    printf(CYAN "--------------------------------------------------------\n" RESET);
+    printf(BOLD " Nhap lua chon cua ban: " RESET);
 }
 
 int main() {
     ServerNode* server_list = NULL;
     int choice;
 
+    // Lam sach man hinh luc moi bat len
+    system("cls"); 
     loadFromFile(&server_list, "data/gpu_servers.dat");
+    pauseAndClear();
 
     while (1) {
         printMenu();
         
-        if (scanf("%d", &choice) != 1) {
-            printf("\n[!] Loi: Vui long nhap mot so nguyen!\n");
-            while(getchar() != '\n'); 
+        char next_char;
+        if (scanf("%d%c", &choice, &next_char) != 2 || next_char != '\n') {
+            printf(RED "\n[!] Loi: Vui long chi nhap so nguyen!\n" RESET);
+            if (next_char != '\n') while(getchar() != '\n'); 
+            pauseAndClear();
             continue;
         }
 
         switch (choice) {
             case 1:
                 displayServers(server_list);
+                pauseAndClear();
                 break;
             case 2: {
                 int id, vtotal;
                 char model[50], endpoint[100];
-
                 printf("\n--- THEM MAY CHU MOI ---\n");
                 
-                // Vong lap bat nhap ID den khi nao KHONG TRUNG thi thoi
-                // Vong lap bat nhap ID den khi nao KHONG TRUNG va CHI CHUA SO
                 while (1) {
                     printf("Nhap ID may chu (So nguyen): ");
-                    
-                    char next_char;
-                    // Kiem tra xem co doc duoc 1 so va 1 ky tu (Enter) hay khong
                     if (scanf("%d%c", &id, &next_char) != 2 || next_char != '\n') { 
-                        printf("[!] Loi: ID khong hop le! Vui long chi nhap so nguyen.\n");
-                        // Don dep bo nho dem ban phim neu chuoi bi sai
-                        if (next_char != '\n') {
-                            while(getchar() != '\n'); 
-                        }
+                        printf(RED "[!] Loi: ID khong hop le!\n" RESET);
+                        if (next_char != '\n') while(getchar() != '\n'); 
                         continue;
                     }
-
-                    // Kiem tra trung lap hoac so am
                     if (checkIdExists(server_list, id)) {
-                        printf("[!] Loi: Server ID %d da ton tai! Vui long chon ID khac.\n", id);
+                        printf("[!] Loi: Server ID %d da ton tai!\n", id);
                     } else if (id <= 0) {
-                        printf("[!] Loi: ID phai lon hon 0!\n");
-                    } else {
-                        break; // ID hoan toan hop le -> thoat vong lap
-                    }
+                        printf(RED "[!] Loi: ID phai lon hon 0!\n"RESET);
+                    } else break; 
                 }
 
                 printf("Nhap Model GPU (VD: RTX_5060): ");
@@ -80,19 +83,16 @@ int main() {
                 while(getchar() != '\n');
 
                 addServer(&server_list, id, model, vtotal, endpoint);
-                printf("\n[+] Da them may chu %s thanh cong vao he thong!\n", model);
+                printf("\n[+] Da them may chu %s thanh cong!\n", model);
+                pauseAndClear();
                 break;
             }
             case 3: {
                 char ai_name[50];
                 int req_vram;
-                
                 printf("\n--- TRIEN KHAI MODEL AI ---\n");
                 printf("Nhap ten Model (VD: Qwen-31B): ");
-                
-               
-                scanf(" %[^\n]", ai_name); 
-                
+                scanf(" %[^\n]", ai_name);
                 while(getchar() != '\n');
                 
                 printf("Nhap dung luong VRAM yeu cau (GB): ");
@@ -100,22 +100,39 @@ int main() {
                 while(getchar() != '\n');
                 
                 deployAIModel(server_list, ai_name, req_vram);
+                pauseAndClear();
                 break;
             }
             case 4: {
                 int del_id;
                 printf("\n--- GO BO MAY CHU ---\n");
                 printf("Nhap ID may chu can thanh ly: ");
-                
-                if (scanf("%d", &del_id) != 1) {
-                    printf("[!] Loi: ID khong hop le! Vui long chi nhap so nguyen.\n");
+                if (scanf("%d", &del_id) == 1) {
+                    while(getchar() != '\n');
+                    deleteServer(&server_list, del_id);
+                } else {
+                    printf("[!] Loi nhap lieu!\n");
                     while(getchar() != '\n'); 
-                    break;
                 }
-                while(getchar() != '\n');
-
-                // Goi ham xoa
-                deleteServer(&server_list, del_id);
+                pauseAndClear();
+                break;
+            }
+            case 5:
+                sortServersByVRAM(server_list);
+                pauseAndClear();
+                break;
+            case 6: {
+                int toggle_id;
+                printf("\n--- BAO TRI MAY CHU ---\n");
+                printf("Nhap ID may chu muon bat/tat trang thai: ");
+                if (scanf("%d", &toggle_id) == 1) {
+                    while(getchar() != '\n');
+                    toggleServerStatus(server_list, toggle_id);
+                } else {
+                    printf("[!] Loi nhap lieu!\n");
+                    while(getchar() != '\n'); 
+                }
+                pauseAndClear();
                 break;
             }
             case 0:
@@ -126,9 +143,9 @@ int main() {
                 printf("He thong tat an toan. Tam biet!\n");
                 return 0;
             default:
-                printf("\n[!] Lua chon khong hop le. Vui long chon tu 0-3.\n");
+                printf("\n[!] Lua chon khong hop le.\n");
+                pauseAndClear();
         }
     }
-
     return 0;
 }

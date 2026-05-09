@@ -45,14 +45,16 @@ void addServer(ServerNode** head, int id, const char* model, int vtotal, const c
 
 void displayServers(ServerNode* head) {
     if (head == NULL) {
-        printf("\n[!] Danh sach may chu hien dang trong.\n");
+        // Dung mau Vang cho canh bao nhe nhang
+        printf(YELLOW "\n[i] Danh sach may chu hien dang trong. Vui long them may chu!\n" RESET);
         return;
     }
     
-    printf("\n========================================================== DASHBOARD HA TANG GPU ==========================================================\n");
-    printf(" %-8s | %-18s | %-28s | %-35s | %-10s \n", 
+    // Dung mau Cyan (Xanh lam) lam chu dao cho phan vien de tao cam giac cong nghe
+    printf(CYAN "\n============================================================= DASHBOARD HA TANG GPU =============================================================\n" RESET);
+    printf(BOLD " %-8s | %-18s | %-26s | %-35s | %-10s \n" RESET, 
            "ID", "GPU Model", "Tai nguyen VRAM", "API Endpoint", "Status");
-    printf("----------+--------------------+------------------------------+-------------------------------------+------------\n");
+    printf(CYAN "----------+--------------------+----------------------------+-------------------------------------+------------\n" RESET);
     
     ServerNode* temp = head;
     while (temp != NULL) {
@@ -60,6 +62,7 @@ void displayServers(ServerNode* head) {
         int bar_length = 10;
         int filled = (percent * bar_length) / 100;
         
+        // Tao thanh bar thua nguyen ban (Khong chua ma mau)
         char bar[20] = "[";
         for (int i = 0; i < bar_length; i++) {
             if (i < filled) strcat(bar, "#");
@@ -67,15 +70,30 @@ void displayServers(ServerNode* head) {
         }
         strcat(bar, "]");
 
-        char vram_info[50];
-        sprintf(vram_info, "%2d/%2dGB %s", temp->vram_used, temp->vram_total, bar);
-
-        printf(" %-8d | %-18s | %-28s | %-35s | %-10s \n",
-               temp->server_id, temp->gpu_model, vram_info,
-               temp->api_endpoint, temp->status == 1 ? "Online" : "Offline");
-               
-        // TÍNH NĂNG MỚI: Dòng kẻ ngang ngăn cách giữa các máy chủ
-        printf("----------+--------------------+------------------------------+-------------------------------------+------------\n");
+        // 1. In ID va Model (Mau trang mac dinh)
+        printf(" %-8d | %-18s | ", temp->server_id, temp->gpu_model);
+        
+        // 2. In muc tieu thu VRAM (8 ky tu)
+        printf("%2d/%2dGB ", temp->vram_used, temp->vram_total);
+        
+        // 3. In Progress Bar voi mau sac thay doi theo do tai (18 ky tu)
+        if (percent >= 80) {
+            printf(RED "%-18s" RESET, bar); // Qua tai -> Do
+        } else {
+            printf(GREEN "%-18s" RESET, bar); // Binh thuong -> Xanh la
+        }
+        
+        // 4. In Endpoint 
+        printf("| %-35s | ", temp->api_endpoint);
+        
+        // 5. In Status
+        if (temp->status == 1) {
+            printf(GREEN "%-10s" RESET "\n", "Online");
+        } else {
+            printf(RED "%-10s" RESET "\n", "Offline");
+        }
+        
+        printf(CYAN "----------+--------------------+----------------------------+-------------------------------------+------------\n" RESET);
                
         temp = temp->next;
     }
@@ -195,4 +213,56 @@ void deleteServer(ServerNode** head, int id) {
     // Thu hoi bo nho (Bat buoc phai co de khong bi tru diem)
     free(temp); 
     printf("\n[+] Da go bo thanh cong Server ID %d ra khoi he thong.\n", id);
+}
+
+// 7. Tinh nang VIP: Sap xep server theo VRAM (Giam dan) bang Bubble Sort
+void sortServersByVRAM(ServerNode* head) {
+    if (head == NULL || head->next == NULL) return;
+    
+    int swapped;
+    ServerNode* ptr1;
+    ServerNode* lptr = NULL;
+
+    printf("\nDang toi uu hoa va sap xep lai he thong...\n");
+    do {
+        swapped = 0;
+        ptr1 = head;
+
+        while (ptr1->next != lptr) {
+            // Neu VRAM may hien tai NHO HON may tiep theo -> Doi cho
+            if (ptr1->vram_total < ptr1->next->vram_total) { 
+                // Doi ID
+                int t_id = ptr1->server_id; ptr1->server_id = ptr1->next->server_id; ptr1->next->server_id = t_id;
+                // Doi VRAM Total & Used
+                int t_vt = ptr1->vram_total; ptr1->vram_total = ptr1->next->vram_total; ptr1->next->vram_total = t_vt;
+                int t_vu = ptr1->vram_used; ptr1->vram_used = ptr1->next->vram_used; ptr1->next->vram_used = t_vu;
+                // Doi Status
+                int t_st = ptr1->status; ptr1->status = ptr1->next->status; ptr1->next->status = t_st;
+                // Doi Chuoi (Model & Endpoint)
+                char t_mod[50]; strcpy(t_mod, ptr1->gpu_model); strcpy(ptr1->gpu_model, ptr1->next->gpu_model); strcpy(ptr1->next->gpu_model, t_mod);
+                char t_api[100]; strcpy(t_api, ptr1->api_endpoint); strcpy(ptr1->api_endpoint, ptr1->next->api_endpoint); strcpy(ptr1->next->api_endpoint, t_api);
+
+                swapped = 1;
+            }
+            ptr1 = ptr1->next;
+        }
+        lptr = ptr1;
+    } while (swapped);
+    printf("[+] Da sap xep xong! Cac GPU manh nhat da duoc dua len top.\n");
+}
+
+// 8. Tinh nang VIP: Thay doi trang thai (Online <-> Offline) de bao tri
+void toggleServerStatus(ServerNode* head, int id) {
+    ServerNode* temp = head;
+    while (temp != NULL) {
+        if (temp->server_id == id) {
+            // Dao nguoc trang thai: Dang 1 thi thanh 0, dang 0 thi thanh 1
+            temp->status = (temp->status == 1) ? 0 : 1; 
+            printf("\n[+] Thanh cong! Server ID %d da chuyen sang trang thai: %s\n", 
+                   id, temp->status == 1 ? "ONLINE" : "OFFLINE (Bao tri)");
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("\n[-] THAT BAI: Khong tim thay Server ID %d.\n", id);
 }

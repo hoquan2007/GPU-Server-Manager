@@ -1,7 +1,6 @@
 #ifndef SERVER_LIST_H
 #define SERVER_LIST_H
 
-// --- DINH NGHIA MAU SAC ANSI ---
 #define RESET   "\033[0m"
 #define BOLD    "\033[1m"
 #define RED     "\033[1;31m"
@@ -13,7 +12,6 @@
 #define WHITE   "\033[37m"
 #endif
 
-// --- CAU TRUC DU LIEU ---
 typedef struct ServerNode {
     int server_id;
     char gpu_model[50];
@@ -24,7 +22,6 @@ typedef struct ServerNode {
     struct ServerNode* next;
 } ServerNode;
 
-// --- KHAI BAO HAM CORE ---
 void addServer(ServerNode** head, int id, const char* model, int vtotal, const char* endpoint);
 void displayServers(ServerNode* head, int is_live, int uptime_seconds, int blink);
 void freeList(ServerNode** head);
@@ -34,7 +31,8 @@ void deleteServer(ServerNode** head, int id);
 void sortServersByVRAM(ServerNode* head);
 void toggleServerStatus(ServerNode* head, int id);
 
-// --- TRO LY AI (NANG CAP QUYEN HAN) ---
+// --- 2 CON SIÊU AI ---
+void interactWithModel(ServerNode** head_ref);
 void nextgpuCopilot(ServerNode** head_ref);
 
 #endif

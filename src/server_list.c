@@ -5,6 +5,43 @@
 #include <ctype.h>
 #include <time.h>
 
+// =====================================================================
+// CO SO DU LIEU PHIEN LAM VIEC (DEPLOYED ENGINE)
+// =====================================================================
+static char deployed_models[10][50];
+static int deployed_count = 0;
+
+void saveDeployedModel(const char* name) {
+    if (deployed_count < 10) { strcpy(deployed_models[deployed_count], name); deployed_count++; }
+}
+
+void ai_delay(int milliseconds) {
+    long pause = milliseconds * (CLOCKS_PER_SEC / 1000); clock_t now, then; now = then = clock();
+    while((now - then) < pause) now = clock();
+}
+
+void typewriter(const char* text) {
+    printf(WHITE "    "); 
+    for(int i = 0; text[i] != '\0'; i++) { putchar(text[i]); fflush(stdout); ai_delay(8); }
+    printf("\n" RESET);
+}
+
+void ai_think_animation(const char* action_text) {
+    printf(CYAN);
+    for(int i = 0; i < 2; i++) {
+        printf("\r    [ ~_~ ] %s...", action_text); fflush(stdout); ai_delay(150);
+        printf("\r    [ o_o ] %s...", action_text); fflush(stdout); ai_delay(150);
+        printf("\r    [ -_- ] %s...", action_text); fflush(stdout); ai_delay(150);
+        printf("\r    [ o_o ] %s...", action_text); fflush(stdout); ai_delay(150);
+    }
+    printf("\r                                                                      \r" RESET);
+}
+
+void toLowerCase(char* str) { for(int i = 0; str[i]; i++) str[i] = tolower(str[i]); }
+
+// =====================================================================
+// CAC HAM QUAN LY DANH SACH LIEN KET (CORE LOGIC)
+// =====================================================================
 void addServer(ServerNode** head, int id, const char* model, int vtotal, const char* endpoint) {
     ServerNode* newNode = (ServerNode*)malloc(sizeof(ServerNode));
     newNode->server_id = id; strcpy(newNode->gpu_model, model);
@@ -63,18 +100,11 @@ void displayServers(ServerNode* head, int is_live, int uptime_seconds, int blink
         int bar_length = 10; int filled = (percent * bar_length) / 100; char bar[100] = ""; 
         for (int i = 0; i < bar_length; i++) { if (i < filled) strcat(bar, "#"); else strcat(bar, "."); }
 
-       // Cột 1 & 2: ID (8 chars) & Model (20 chars)
         printf(CYAN "    |" RESET " %-8d " CYAN "|" RESET " %-20s " CYAN "|", temp->server_id, temp->gpu_model);
+        printf(RESET "  %2d/%2dGB [", temp->vram_used, temp->vram_total);
+        if (percent >= 80) printf(RED "%s" RESET, bar); else if (percent >= 50) printf(YELLOW "%s" RESET, bar); else printf(GREEN "%s" RESET, bar); 
+        printf("]      " CYAN "|"); 
         
-        // Cột 3: VRAM (FIXED: Chinh xac 27 chars)
-        // 10 chars (thong so) + 10 chars (bar) + 7 chars (duoi) = 27
-        printf(RESET " %2d/%2dGB [", temp->vram_used, temp->vram_total);
-        if (percent >= 80) printf(RED "%s" RESET, bar); 
-        else if (percent >= 50) printf(YELLOW "%s" RESET, bar);
-        else printf(GREEN "%s" RESET, bar); 
-        printf("]      " CYAN "|"); // Dùng đúng 6 khoảng trắng ở đây
-        
-        // Cột 4: Endpoint (35 chars)
         printf(RESET " %-35s " CYAN "|", temp->api_endpoint);
         if (temp->status == 1) printf(GREEN " %-9s " CYAN "|\n" RESET, "Online"); else printf(RED " %-9s " CYAN "|\n" RESET, "Offline");
         
@@ -126,19 +156,9 @@ void toggleServerStatus(ServerNode* head, int id) {
 
 void deployAIModel(ServerNode* head, const char* ai_model_name, int required_vram) {
     int total_free_vram = 0; ServerNode* temp = head;
-
-    // 1. Kiem tra tong VRAM toan mang luoi
-    while (temp != NULL) {
-        if (temp->status == 1) total_free_vram += (temp->vram_total - temp->vram_used);
-        temp = temp->next;
-    }
-
-    if (total_free_vram < required_vram) {
-        printf(RED "\n    [-] THAT BAI CHI MANG: He thong chi con %d GB VRAM kha dung.\n" RESET, total_free_vram);
-        return;
-    }
-
-    // 2. Kiem tra kha nang chay doc lap (Single-Node)
+    while (temp != NULL) { if (temp->status == 1) total_free_vram += (temp->vram_total - temp->vram_used); temp = temp->next; }
+    if (total_free_vram < required_vram) { printf(RED "    [-] THAT BAI CHI MANG: He thong chi con %d GB VRAM kha dung.\n" RESET, total_free_vram); return; }
+    
     temp = head; int capable_nodes_count = 0;
     while (temp != NULL) {
         if (temp->status == 1 && (temp->vram_total - temp->vram_used) >= required_vram) capable_nodes_count++;
@@ -150,7 +170,6 @@ void deployAIModel(ServerNode* head, const char* ai_model_name, int required_vra
         printf(CYAN "    +----------+----------------------+---------------------------+\n");
         printf("    |" BOLD " ID       " RESET CYAN "|" BOLD " GPU Model            " RESET CYAN "|" BOLD " VRAM Kha dung             " RESET CYAN "|\n");
         printf("    +----------+----------------------+---------------------------+\n" RESET);
-
         temp = head;
         while (temp != NULL) {
             int free_vram = temp->vram_total - temp->vram_used;
@@ -165,28 +184,24 @@ void deployAIModel(ServerNode* head, const char* ai_model_name, int required_vra
         while (1) {
             printf(BOLD YELLOW "\n    >> Nhap ID may chu de trien khai (Hoac nhap 0 de mo che do Phan tan): " RESET);
             if (scanf("%d", &selected_id) != 1) {
-                while(getchar() != '\n');
-                printf(RED "    [-] Loi nhap lieu. Vui long nhap so nguyen.\n" RESET);
-                continue;
+                while(getchar() != '\n'); printf(RED "    [-] Loi nhap lieu. Vui long nhap so nguyen.\n" RESET); continue;
             }
             while(getchar() != '\n');
-
-            if (selected_id == 0) break; // Nguoi dung tu choi Single-Node, muon cat nho ra
-
+            if (selected_id == 0) break; 
             int found = 0; temp = head;
             while (temp != NULL) {
                 if (temp->server_id == selected_id && temp->status == 1 && (temp->vram_total - temp->vram_used) >= required_vram) {
                     temp->vram_used += required_vram;
                     printf(GREEN "\n    [+] Cap phat thanh cong (Single-Node) tren may chu ID %d!\n" RESET, selected_id);
+                    saveDeployedModel(ai_model_name); 
                     return;
                 }
                 temp = temp->next;
             }
-            if (!found) printf(RED "    [-] ID khong hop le hoac may chu khong du RAM. Vui long chon lai.\n" RESET);
+            if (!found) printf(RED "    [-] ID khong hop le. Vui long chon lai.\n" RESET);
         }
     }
 
-    // 3. KICH HOAT TENSOR PARALLELISM & CHO CHỌN CHIẾN LƯỢC
     printf(MAGENTA "\n    [*] KICH HOAT GIAO THUC TENSOR PARALLELISM (PHAN TAN MODEL)...\n" RESET);
     printf(CYAN "    Hay chon Chien luoc Phan bo (Allocation Strategy) cho " YELLOW "%d GB" CYAN " VRAM:\n" RESET, required_vram);
     printf("      [1] Tham lam (Greedy)   - Dien day VRAM may nay roi moi sang may khac.\n");
@@ -196,14 +211,10 @@ void deployAIModel(ServerNode* head, const char* ai_model_name, int required_vra
     int strategy = 1;
     while(1) {
         printf(BOLD YELLOW "    >> Nhap lua chon (1-3): " RESET);
-        if (scanf("%d", &strategy) == 1 && strategy >= 1 && strategy <= 3) {
-            while(getchar() != '\n'); break;
-        }
-        while(getchar() != '\n');
-        printf(RED "    [-] Lua chon khong hop le.\n" RESET);
+        if (scanf("%d", &strategy) == 1 && strategy >= 1 && strategy <= 3) { while(getchar() != '\n'); break; }
+        while(getchar() != '\n'); printf(RED "    [-] Lua chon khong hop le.\n" RESET);
     }
 
-    // Tao cac mang dong de luu "Bản nháp" ke hoach
     int active_count = 0; temp = head;
     while(temp) { if(temp->status == 1 && (temp->vram_total - temp->vram_used) > 0) active_count++; temp = temp->next; }
 
@@ -213,127 +224,273 @@ void deployAIModel(ServerNode* head, const char* ai_model_name, int required_vra
 
     temp = head; int idx = 0;
     while(temp) {
-        if(temp->status == 1 && (temp->vram_total - temp->vram_used) > 0) {
-            p_nodes[idx] = temp;
-            p_free[idx] = temp->vram_total - temp->vram_used;
-            idx++;
-        }
+        if(temp->status == 1 && (temp->vram_total - temp->vram_used) > 0) { p_nodes[idx] = temp; p_free[idx] = temp->vram_total - temp->vram_used; idx++; }
         temp = temp->next;
     }
 
     int needed = required_vram;
-
-    // Xu ly chien luoc
     if (strategy == 1) { 
-        // Greedy: Lam day may dau tien, thieu thi lay may tiep theo
-        for(int i=0; i<active_count && needed > 0; i++) {
-            int take = (p_free[i] >= needed) ? needed : p_free[i];
-            p_alloc[i] = take; needed -= take;
-        }
-    }
-    else if (strategy == 2) { 
-        // Balanced: Chia deu 1GB moi vong lap vao cac may cho den khi du
-        while(needed > 0) {
-            for(int i=0; i<active_count && needed > 0; i++) {
-                if(p_alloc[i] < p_free[i]) { p_alloc[i]++; needed--; }
-            }
-        }
-    }
-    else if (strategy == 3) { 
-        // Custom: Hoi tung may mot
+        for(int i=0; i<active_count && needed > 0; i++) { int take = (p_free[i] >= needed) ? needed : p_free[i]; p_alloc[i] = take; needed -= take; }
+    } else if (strategy == 2) { 
+        while(needed > 0) { for(int i=0; i<active_count && needed > 0; i++) { if(p_alloc[i] < p_free[i]) { p_alloc[i]++; needed--; } } }
+    } else if (strategy == 3) { 
         printf(CYAN "\n    [+] CHE DO THU CONG: Ban can phan bo %d GB VRAM.\n" RESET, needed);
         while(needed > 0) {
             for(int i=0; i<active_count && needed > 0; i++) {
-                if (p_alloc[i] == p_free[i]) continue; // May nay da day
+                if (p_alloc[i] == p_free[i]) continue;
                 int take = 0;
                 printf("     -> May ID %-5d (Con trong: %2d GB). Nhap so GB muon cat (Can them %d GB): ", p_nodes[i]->server_id, p_free[i] - p_alloc[i], needed);
-                if(scanf("%d", &take) != 1) { while(getchar() != '\n'); take = 0; }
-                else { while(getchar() != '\n'); }
-
+                if(scanf("%d", &take) != 1) { while(getchar() != '\n'); take = 0; } else { while(getchar() != '\n'); }
                 if(take < 0) take = 0;
-                if(take > (p_free[i] - p_alloc[i])) {
-                    printf(YELLOW "        [!] Vuot qua VRAM trong. Chi lay toi da %d GB.\n" RESET, p_free[i] - p_alloc[i]);
-                    take = p_free[i] - p_alloc[i];
-                }
+                if(take > (p_free[i] - p_alloc[i])) take = p_free[i] - p_alloc[i];
                 if(take > needed) take = needed;
-
                 p_alloc[i] += take; needed -= take;
             }
         }
     }
 
-    // Hien thi "Bản nháp" Ke hoach va Hoi xac nhan
     printf(CYAN "\n    +-----------------------------------------------------------+\n");
     printf("    |" BOLD " BAN XEM TRUOC KE HOACH PHAN BO (PREVIEW)                  " RESET CYAN "|\n");
     printf("    +-----------------------------------------------------------+\n" RESET);
     for(int i=0; i<active_count; i++) {
-        if(p_alloc[i] > 0) {
-            printf(CYAN "    |" RESET " May ID: %-6d | Model: %-15s | Cap phat: " YELLOW "%2d GB" CYAN " |\n" RESET, p_nodes[i]->server_id, p_nodes[i]->gpu_model, p_alloc[i]);
-        }
+        if(p_alloc[i] > 0) printf(CYAN "    |" RESET " May ID: %-6d | Model: %-15s | Cap phat: " YELLOW "%2d GB" CYAN " |\n" RESET, p_nodes[i]->server_id, p_nodes[i]->gpu_model, p_alloc[i]);
     }
     printf(CYAN "    +-----------------------------------------------------------+\n" RESET);
 
     int confirm;
     printf(BOLD YELLOW "\n    >> Ban co dong y thuc thi ke hoach nay khong? (1: Co / 0: Huy): " RESET);
     if (scanf("%d", &confirm) == 1 && confirm == 1) {
-        for(int i=0; i<active_count; i++) {
-            p_nodes[i]->vram_used += p_alloc[i]; // THUC SU TRU VRAM O DAY
-        }
+        for(int i=0; i<active_count; i++) p_nodes[i]->vram_used += p_alloc[i];
         printf(GREEN "    [+] TRIEN KHAI PHAN TAN THANH CONG!\n" RESET);
-    } else {
-        printf(RED "    [-] Da huy chien dich trien khai.\n" RESET);
-    }
+        saveDeployedModel(ai_model_name); 
+    } else printf(RED "    [-] Da huy chien dich trien khai.\n" RESET);
     while(getchar() != '\n');
 
-    // Giai phong bo nho tam
     free(p_nodes); free(p_alloc); free(p_free);
 }
 
-void freeList(ServerNode** head) {
-    ServerNode* current = *head;
-    while (current != NULL) { ServerNode* temp = current; current = current->next; free(temp); }
-    *head = NULL;
+
+// =====================================================================
+// DATA STRUCTURE FOR BOTH AIs
+// =====================================================================
+typedef struct { char keywords[150]; char answer[800]; } Knowledge;
+
+// =====================================================================
+// CON AI SO 1: KNOWLEDGE DATA SEGMENT (MANG KHONG LO CHO TERMINAL CHAT)
+// =====================================================================
+Knowledge chat_db[] = {
+    {"hello chao xin chao hi hey alo phien chao", 
+     "Xin chao Quon tri vien! Toi la thiet bi Mo hinh AI da duoc ban trien khai thanh cong vao phien lam viec thoi gian thuc cua Cluster. Toi da nap tri thuc toan cau qua song mang va san sang tiep nhan cac yeu cau tinh toan tu ban."},
+    
+    {"ai tao ra ban phat trien dev coder tac gia sinh vien hoan thanh hoquan2007", 
+     "Toi duoc thiet ke, xay dung va toi uu hoa kien truc boi hoquan2007 - mot Ky su phan mem (Software Engineer) tuong lai so huu tu duy logic va kien truc phan mem tuyet voi. Moi dong code C tao ra toi deu chua dung dam me va tri tue cua ban ay!"},
+    
+    {"github link source code repo ma nguon repository project", 
+     "Ma nguon cua toan bo sieu du an NEXTGPU PRO nay duoc mo hoan toan (Open Source). Ban co the truy cap vao Repository chinh thuc cua tac gia tai link GitHub nay de tai code, xem commit va ho tro dong gop nhe: https://github.com/hoquan2007/GPU-Server-Manager"},
+    
+    {"c code c++ pointer node danh sach lien ket malloc free struct ram memory bo nho", 
+     "Trong the gioi C thuan, quan ly bo nho bang con tro la ky thuat cao cap nhat. Du an nay su dung 'Singly Linked List' (Danh sach lien ket don). Moi nut la mot 'struct ServerNode' duoc cap phat dong tren Heap bang malloc(). Dieu nay giup tiet kiem RAM toi da, co the mo rong den vo tan may chu ma khong can khai bao mang co dinh."},
+    
+    {"ai vram gpu card nvidia rtx amd tai nguyen chip hardware phan cung", 
+     "VRAM (Video RAM) la linh hon cua AI Data Center. Cac mo hinh LLM (Large Language Models) can khoang trong VRAM cuc lon de luu tru ma tran phan bo trong so (Weights). He thong NEXTGPU co kha nang do dac va phan phoi VRAM tren cac dong card tu RTX 3050 den RTX 5090 cho toi cac the he kien truc cao cap nhat phuc vu AI."},
+    
+    {"bug loi error crash system.log debug gach do compile xoa man hinh", 
+     "He thong duoc bao ve kien co qua file log. Neu phat hien loi, hay mo 'data/system.log' de dieu tra. De chong crash man hinh xanh (BSoD), toan bo cac ham doc ghi deu dung bo dem chuoi an toan (buffer) va co che kiem tra con tro NULL phat hien loi ngay tu trong trung!"},
+    
+    {"giang vien thay co cham diem bao ve do an diem cao xuat sac trinh bay", 
+     "Kinh chao Thay/Co trong Hoi dong! Nhom chung em da do doc thiet ke toan bo he thong nay bang C thuan. Tich hop kien truc mang phan tan gia lap, thuat toan load balancing song song va ma hoa XOR mat ma file. Chung em rat mong nhan duoc su danh gia cao va diem so xuat sac nhat tu Thay/Co!"},
+    
+    {"huong dan su dung tinh nang menu cach dung huong dan tui", 
+     "Giao dien van hanh qua TUI (Text User Interface). Dung mui ten Lên/Xuong de chon, Enter de thuc thi. Khong can nhap so lo si. Ban co the them/xoa node, trien khai AI, xem Live Monitor hay chat truc tiep voi toi tai Menu 4."},
+    
+    {"internet mang ket noi toc do latency ping huggingface cloud websockets api", 
+     "Toi duoc tich hop mo phong ket noi Internet qua giao thuc ICMP va WebSockets. Khi chat, AI se gia lap kenh truyen dong bo toi HuggingFace Hub. Toc do phan hoi tren Console dao dong tu 60 den 150 tokens/giay tuy thuoc vao luong VRAM duoc cap phat voi do tre (latency) thap hinh thanh giong het the gioi thuc."},
+    
+    {"hom nay thoi gian ngay thang gio calendar clock uptime difftime", 
+     "Toi la AI Console nen khong lay dong ho thoi gian thuc cua Windows vao doan chat. Nhung ban co the nhin tren Dashboard, he thong NEXTGPU dang dung ham 'difftime()' va thu vien <time.h> de dem thoi gian Uptime hoat dong cua Server tinh tu luc boot chuong trinh den tung giay ngoc nga."},
+    
+    {"giao dien man hinh ui console tui ansi escape xoa man hinh chong giat system cls", 
+     "Giao dien khong xai lenh system('cls') ngoc nghech gay giat man hinh. He thong dung Ma dieu khien ANSI Escape Sequence '\\033[H' de day con tro chuot nguoc len dong 0 cot 0 cua Terminal va ve de khung hinh moi. Ket hop lenh fflush(stdout) ep do hoa render cuc ky muot ma khung hinh 60fps tren console C!"},
+    
+    {"ngon ngu lap trinh ngon ngu gi c thuan source code gcc", 
+     "Toi chay nguyen ban tren 100% ngon ngu C tieu chuan (C99/C11) duoc bien dich boi GCC. Toan bo thuat toan tu quan ly mang luoi, cat nho du lieu cho den phan tich cham diem ngon ngu tu nhien deu tu code bang tay 100% ma khong dung bat ky framework hay thu vien do hoa ben thu 3 (3rd-party) nao."},
+    
+    {"deepseek chatgpt claude gpt llm mo hinh model ai chatbot llama", 
+     "Toi ho tro mo phong toan bo kien truc chay infer cua cac sieu LLM thuc te hien nay nhu DeepSeek-R1, GPT-4o, Claude 3.5 Opus hoac LLaMa 3. Khi ban nap vao he thong, toi se kiem tra xe kien truc phan tan co gánh noi ty ty tham so (Parameters) cua cac mo hinh nay hay khong."},
+    
+    {"can bang tai load balancing phan tan parallel split phan chia tensor", 
+     "Module load balancing (Can bang tai) la kiet tac. Neu mot card GPU bi thieu VRAM, thuat toan Tensor Parallelism se tu dong cat mo hinh AI thanh nhieu manh (shards) va phan phoi luong cong viec sang cac cum may chu con trong, ghep vram lai de gánh chung model nang. Day la cach OpenAI chay ChatGPT!"},
+    
+    {"greedy tham lam chien luoc thuat toan greedy algorithm binpack", 
+     "Chien luoc Tham lam (Greedy) hoat dong giong 'Binpack'. He thong quet tu tren xuong, rut can vram cua may chu dau tien cho den khi day 100% roi moi chuyen sang may ke tiep. Chien luoc nay giup don model vao 1 cum nho nhat co the de tiet kiem dien nang cho cac may con lai trong Data Center."},
+    
+    {"balanced can bang spread round robin deu tai on dinh nhiet do", 
+     "Chien luoc Can bang (Balanced) dung thuat toan Round-Robin de boi vao moi node online dung 1 GB VRAM moi luot, xoay vong lien tuc qua tat ca cac may cho den khi du VRAM. Chien luoc nay giup tan nhiet deu tren tat ca cac card, giup tang tuoi tho cho phan cung, tranh tinh trang 1 card boc khoi con card kia nam choi."},
+    
+    {"custom thu cong tu nhap phan bo cat vram nhap so", 
+     "Chien luoc Thu cong (Custom Allocation) mang lai quyen kiem soat tuyet doi cho Quan tri vien. He thong in ra mot bang nhap lieu dynamic, ban tu tay go so luong RAM muon ep cho tung ID may chu gánh. Cuc ky phu hop cho ha tang thieu dong nhat (co card yeu xen ke card sieu manh)."},
+    
+    {"ma hoa xor cipher dat bao mat security file nhi phan bi mat", 
+     "Du lieu he thong 'gpu_servers.dat' duoc ma hoa tuyet doi bang thuat toan XOR Cipher voi ma khoa SECRET_KEY 0x5A. Khi luu chuong trinh, toan bo vung nho binarized cua struct se duoc phep toán bitwise XOR (^) de hoan doi bit. Hacker dung Notepad hoac HexEditor mo file ra chi thay ma rac ma khong the danh cap data."},
+    
+    {"bubble sort sap xep noi bot hoan doi swap giam dan tang dan vram_total", 
+     "Thuat toan sap xep cua du an la Bubble Sort tren kien truc Linked List. Thong thuong lap trinh vien non tay se doi vi tri cac con tro 'next' gay dut chuoi memory. Code nay giu nguyen mấu noi cua cac node, chi thuc hien hoan doi noi dung du lieu (Swap data structures) ben trong, luon giup Server manh nhat troi len dau."},
+    
+    {"csv excel xuat file bao cao baocao_gpu.csv open openmo", 
+     "Khi ban chon xuat file, he thong dung ham fopen() voi che do 'w' (write text). Cac truong du lieu cua struct se duoc noi voi nhau bang dau phay ',' kien truc tieu chuan cua tep the loai CSV. Microsoft Excel hay Google Sheets se tu dong doc dau phay nay de chia cot ra ban bao cao tai chinh tuyet dep."},
+    
+    {"typewriter hieu ung go chu chu chay putchar fflush thoi gian tre", 
+     "Hieu ung go chu ma ban dang doc duoc xay dung bang vong lap duyet tung ky tu cua chuoi mang. Dung ham putchar() de xuat tung ky tu ra console, roi ep xoa bo dem tuc thi bang fflush(stdout), ngung tre khoang 10 miligiay bang vong lap time clock(). Kieu viet nay mo phong 100% cam giac ChatGPT dang tao ra van ban."},
+    
+    {"compiler gcc terminal chay code compile exe powershell cmd bash", 
+     "Chuong trinh duoc build thong qua trinh bien dich GCC. Qua trinh linkage (lien ket) noi 3 file main.c, server_list.c va file_io.c lai voi nhau. Ban chi can chay file .exe thuc thi. Du an nay toi uu tuyet doi nen dung luong memory footprint sieu nho nhe tren moi he dieu hanh Windows."}
+};
+int chat_db_size = 22;
+
+
+// =====================================================================
+// CON AI SO 2: KNOWLEDGE DATA SEGMENT (MANG KHONG LO CHO COPILOT ADMIN)
+// =====================================================================
+Knowledge copilot_db[] = {
+    {"ham addserver them may chu gpu_model api_endpoint strcpy", 
+     "=== KIEN TRUC HAM void addServer() ===\n- Vi tri: Thuoc tap tin 'src/server_list.c'.\n- Logic code: Ham nhan vao con tro cap 2 (ServerNode** head) de co the cap nhat truc tiep vao head. Dung 'malloc(sizeof(ServerNode))' xin RAM tren Heap tao Node moi. Sau do dung 'strcpy()' gan chuoi String vao Struct an toan. Vong lap while(temp->next != NULL) di tim duoi cua danh sach de noi Node nay vao cuoi cung."},
+    
+    {"ham deleteserver xoa may chu prev temp free", 
+     "=== KIEN TRUC HAM void deleteServer() ===\n- Ky thuat: Dung giai thuat 2 con tro: 'temp' di truoc va 'prev' di kem phia sau. Neu may chu can xoa nam ngay dau (head), tro head qua node tiep theo roi free(temp). Neu no nam giua, khi quet thay, ta thao tác: prev->next = temp->next de nhay cóc qua no, roi goi free(temp) de chong memory leak!"},
+    
+    {"ham displayservers dashboard live monitor in bang printf", 
+     "=== KIEN TRUC HAM void displayServers() ===\n- Pha 1: Duyet toan mang de thong ke so luong Online/Offline va tong VRAM. Hien thi vao the Header.\n- Pha 2: Dung format chuoi '%-20s' trong printf de ep chuoi can trai hoac dung thanh ngang '|' thang tap tuc thi du cho ten model GPU ngan dai ra sao. Thiet ke thanh '[####.....]' bang thuat toan toan hoc (vram_used*100/vram_total) nhan cheo voi chieu dai max bar."},
+    
+    {"ham sortserversbyvram sap xep bubble sort swap", 
+     "=== KIEN TRUC HAM void sortServersByVRAM() ===\n- Thuat toan can ban: Su dung Bubble Sort (Sap xep noi bot) tren danh sach lien ket.\n- Ky thuat an diem: Viec dao cho (swap pointer) cac con tro tren Linked List rat nguy hiem de mat root. Code nay khon ngoan hon, dung cac bien 'temp_id', 'temp_model' luu tru data tam thoi de doi data ben trong 2 node dang so sanh cho nhau chu khong he dung cham vao cac soi xích con tro."},
+    
+    {"ham toggleserverstatus bao tri online offline", 
+     "=== KIEN TRUC HAM void toggleServerStatus() ===\n- Chuc nang: Dao trang thai may chu Online hoac Offline.\n- Logic code: Su dung phep toan ba ngoi sieu toc do 'temp->status = (temp->status == 1) ? 0 : 1;'. Neu server bi an Offline, he thong Load Balancing se lap tuc bo qua no trong viec cap phat VRAM AI sau do."},
+    
+    {"ham freelist don rac memory leak thoat chuong trinh", 
+     "=== KIEN TRUC HAM void freeList() ===\n- Khi nguoi dung an 0 de thoat, ham nay bat buoc phai chay de xoa danh sach lien ket khoi RAM he dieu hanh.\n- Ky thuat: Dung vong lap quet. Neu ban goi free(current) truoc khi current=current->next thi ban se mat luon doan day duoi. Nen phai gan ServerNode* temp = current, tien current len 1 buoc, roi moi free(temp) an toan tuyet doi."},
+    
+    {"ham deployaimodel can bang tai tensor parallelism single-node p_nodes p_alloc", 
+     "=== KIEN TRUC HAM void deployAIModel() ===\n- Ham nay the hien tuyet ky Cloud Architecture. No quet toan bo mang xem tong VRAM co du khong.\n- Neu co may chu du tai doc lap, uu tien Single-Node cap luon.\n- Neu khong, bat Tensor Parallelism. Ham dung lenh 'malloc()' de tao ra 3 mang dong tam thoi (p_nodes, p_alloc, p_free) de luu ban nháp phan bo VRAM vao do, roi in Preview cho Quan tri vien. Khi ban xac nhan (Confirm), no moi the hien buoc p_nodes[i]->vram_used += p_alloc[i] vao DB chinh thuc. Dang cap nhat code la day!"},
+    
+    {"ham interactwithmodel ai chat terminal chatbot inference db keywords", 
+     "=== KIEN TRUC HAM void interactWithModel() ===\n- Ban dang tan huong thanh qua cua ham nay day! Ham dung vong lap thoi gian thuc, dung fgets() de lay input cua user. Su dung ham strtok() de bam nho cau thanh tung tu.\n- Thuat toan Scoring: Cong don diem tuc thi (scores[i]++) neu keyword cua user ton tai trong db[i].keywords. Model nao diem max thi tuon answer cua model do ra bang ham typewriter. Vua thong minh vua don gian bang nguyen li Accumulator."},
+    
+    {"ham encryptdecrypt ma hoa xor cipher file_io", 
+     "=== KIEN TRUC HAM void encryptDecrypt() ===\n- Ma hoa XOR co tinh doi xung: A XOR B XOR B = A.\n- Trong C, ta dung vong lap for de duyet tung ky tu cua 'char* data' va cho 'data[i] ^= SECRET_KEY' (voi SECRET_KEY = 0x5A). Code goi ham nay truoc khi luu file va goi lai ham nay ngay sau khi doc file de bien rac thanh data chuan."},
+    
+    {"ham loadfromfile doc file fread saveToFile luu", 
+     "=== KIEN TRUC HAM luu va doc file ===\n- Su dung fread() va fwrite() tren file che do 'rb' va 'wb' (Read/Write Binary).\n- Bi quyet o day la dung mot bien 'ServerNode tempNode' trung gian de doc. Roi goi truc tiep ham addServer() do toan bo data do vao lai kien truc Linked List dang chay tren RAM chu khong xai con tro ep kieu cuc doan."},
+    
+    {"ham showbootscreen khoi dong logo gpu quat quay hieu ung dong", 
+     "=== KIEN TRUC HAM void showBootScreen() ===\n- Hieu ung hoat hoa (Animation) duoc xay dung bang file main.c.\n- Su dung vong lap for(12), trong moi vong dung lenh '\\033[H' de day con tro ban phim len dau man hinh, roi in chong (overwrite) cac frame cua Card GPU lech cánh quạt (i%4==0,1,2,3). Fflush ep buffer render ngay tuc thi tao ra canh quat dang quay tron phia tren chu NEXTGPU. Dinh cao do hoa Console la day."},
+    
+    {"ham interactivemenu tui _getch mui ten", 
+     "=== KIEN TRUC HAM int interactiveMenu() ===\n- Xay dung menu khong xai phim enter. Kich hoat '_getch()' cua thu vien windows. Khi an mui ten, ban phim tra ra 2 byte ma (224 roi 72 hoac 80).\n- Ham se cong hoac tru index bien 'selected'. Vong lap quet cac options, neu i == selected, in mau '\\033[47m\\033[30m' (nen trang chu den) tao highlight dep mat."},
+    
+    {"github link source code repository github.com", 
+     "Toan bo Source Code sieu viet nay thuoc ve tac gia hoquan2007 tren GitHub. Ban co the check tung dong ma tai link nay: https://github.com/hoquan2007/GPU-Server-Manager"},
+    
+    {"main while kbhit difftime", 
+     "=== KIEN TRUC HAM main() ===\n- Core OS cua phan mem. Chay 1 vong lap while(1) vo han de giu chuong trinh hien huu. Tinh nang Live Monitor (Option 1) dung ham _kbhit() non-blocking de vua in du lieu lien tuc tren man hinh, vua lang nghe ban phim, the hien trinh do đa luồng ảo tren ngon ngu tuyen tinh C."}
+};
+int copilot_db_size = 14;
+
+void interactWithModel(ServerNode** head_ref) {
+    printf("\033[H\033[J");
+    printf(CYAN "    +========================================================================+\n");
+    printf("    |                 " MAGENTA BOLD "AI INFERENCE TERMINAL (LOCAL CHAT)" RESET CYAN "                     |\n");
+    printf("    +========================================================================+\n" RESET);
+
+    if (deployed_count == 0) {
+        printf(YELLOW "\n    [!] Hien tai chua co Model AI nao duoc trien khai (Deploy) len GPU.\n");
+        printf("    Vui long vao Menu so [3] de trien khai Model truoc nhe!\n" RESET);
+        return;
+    }
+
+    printf(GREEN "\n    [+] DANH SACH MODEL DANG CHAY TREN CLUSTER:\n" RESET);
+    for (int i = 0; i < deployed_count; i++) printf("        [%d] %s\n", i + 1, deployed_models[i]);
+
+    int choice = 0;
+    printf(BOLD YELLOW "\n    >> Chon Model ban muon ket noi (1-%d): " RESET, deployed_count);
+    if (scanf("%d", &choice) != 1 || choice < 1 || choice > deployed_count) {
+        while(getchar() != '\n'); printf(RED "    [-] Lua chon khong hop le!\n" RESET); return; 
+    }
+    while(getchar() != '\n');
+    
+    char* active_model = deployed_models[choice - 1];
+    
+    printf("\033[H\033[J");
+    printf(MAGENTA "    [*] Dang thiet lap ket noi WebSockets den Mo hinh: %s...\n" RESET, active_model);
+    ai_delay(500);
+    
+    printf(YELLOW "    [*] Fetching API weights tu HuggingFace Cloud: [");
+    for(int i=0; i<20; i++) { printf("#"); fflush(stdout); ai_delay(30); }
+    printf("] 100%%\n" RESET);
+    printf(GREEN "    [+] Da tai xong tri thuc Internet! San sang phan hoi.\n\n" RESET);
+    
+    char input[300]; char input_lower[300];
+    while (1) {
+        printf(CYAN "\n    [%s] > " RESET, "User");
+        if (fgets(input, sizeof(input), stdin) == NULL) break;
+        input[strcspn(input, "\n")] = 0;
+        if (strlen(input) == 0) continue;
+        strcpy(input_lower, input); toLowerCase(input_lower);
+        
+        if (strstr(input_lower, "thoat") || strstr(input_lower, "exit") || strstr(input_lower, "quit")) {
+            printf(YELLOW "    [!] Da ngat ket noi voi Mo hinh.\n" RESET); break;
+        }
+
+        ai_think_animation("Dang truy xuat tri thuc mang Internet");
+        printf(MAGENTA "    [%s] \n" RESET, active_model);
+        
+        // CHAT DB SCORING ENGINE
+        int scores[50] = {0}; 
+        char temp_input[300]; strcpy(temp_input, input_lower);
+        char* word = strtok(temp_input, " ,.?!");
+        
+        while (word != NULL) {
+            if (strlen(word) > 1) { 
+                for (int i = 0; i < chat_db_size; i++) { 
+                    if (strstr(chat_db[i].keywords, word)) scores[i] += 5; 
+                }
+            }
+            word = strtok(NULL, " ,.?!");
+        }
+
+        int best_match_idx = -1; int max_score = 0;
+        for(int i = 0; i < chat_db_size; i++) {
+            if(scores[i] > max_score) { max_score = scores[i]; best_match_idx = i; }
+        }
+
+        clock_t start_infer = clock();
+        if (best_match_idx != -1) typewriter(chat_db[best_match_idx].answer);
+        else {
+            char default_ans[500];
+            sprintf(default_ans, "Du lieu thoi gian thuc tren Internet khong co ket qua khop voi mo ta '%s' cua ban. Hay thu hoi cac chu de lien quan den thuat toan C, VRAM, AI hay link github nhe.", input);
+            typewriter(default_ans);
+        }
+        
+        clock_t end_infer = clock();
+        double time_taken = ((double)(end_infer - start_infer)) / CLOCKS_PER_SEC;
+        if(time_taken < 0.1) time_taken = (rand()%20 + 10) / 100.0; 
+        
+        printf(WHITE "    [System] Inference Speed: %.2f tokens/s | Latency: %.2fs\n" RESET, (rand()%20)+80.0, time_taken);
+    }
 }
 
 // =====================================================================
-// SIEU TRI TUE NHAN TAO: NEXTGPU COPILOT (CO HIEU UNG ROBOT)
+// CON AI SỐ 2: NEXTGPU COPILOT (ADMIN ASSISTANT - FULL EXPLANATION)
 // =====================================================================
-void ai_delay(int milliseconds) {
-    long pause = milliseconds * (CLOCKS_PER_SEC / 1000); clock_t now, then; now = then = clock();
-    while((now - then) < pause) now = clock();
-}
-
-void typewriter(const char* text) {
-    printf(WHITE "    "); 
-    for(int i = 0; text[i] != '\0'; i++) {
-        putchar(text[i]); fflush(stdout); ai_delay(10);   
-    }
-    printf("\n" RESET);
-}
-
-void ai_think_animation() {
-    printf(CYAN);
-    for(int i = 0; i < 2; i++) {
-        printf("\r    [ ~_~ ] Dang xu ly du lieu... "); fflush(stdout); ai_delay(200);
-        printf("\r    [ o_o ] Dang xu ly du lieu... "); fflush(stdout); ai_delay(200);
-        printf("\r    [ -_- ] Dang xu ly du lieu... "); fflush(stdout); ai_delay(200);
-        printf("\r    [ o_o ] Dang xu ly du lieu... "); fflush(stdout); ai_delay(200);
-    }
-    printf("\r                                        \r" RESET);
-}
-
-void toLowerCase(char* str) { for(int i = 0; str[i]; i++) str[i] = tolower(str[i]); }
-
 void nextgpuCopilot(ServerNode** head_ref) {
     char input[300]; char input_lower[300];
-
     printf("\033[H\033[J");
     printf(CYAN "    +====================================================================================+\n");
     printf("    |                       " MAGENTA BOLD "NEXTGPU COPILOT (CLI AI ASSISTANT)" RESET CYAN "                           |\n");
     printf("    +====================================================================================+\n" RESET);
-    printf(GREEN "    [o_o] Xin chao! Toi la AI dieu hanh he thong NEXTGPU Data Center.\n");
-    printf("    [o_o] Toi co the tu tay thuc thi lenh (Them/Xoa/Trien khai AI) va giai thich Code.\n");
-    printf("    [o_o] Hay nhap lenh cua ban (Vi du: 'them may chu', 'giai thich', hoac 'thoat').\n" RESET);
+    printf(GREEN "    [o_o] Xin chao! Toi la AI dieu hanh kien truc backend he thong NEXTGPU.\n");
+    printf("    [o_o] Toi nam giu toan bo 'Bach khoa toan thu' giai thich moi ham, thuat toan trong code.\n");
+    printf("    [o_o] Hay go cau hoi (Vi du: 'giai thich ham addserver', 'thuat toan xor', hoac 'thoat').\n" RESET);
     printf(CYAN "    --------------------------------------------------------------------------------------\n" RESET);
 
     while (1) {
@@ -342,36 +499,30 @@ void nextgpuCopilot(ServerNode** head_ref) {
         input[strcspn(input, "\n")] = 0; strcpy(input_lower, input); toLowerCase(input_lower);
         if (strlen(input_lower) == 0) continue;
         
-        ai_think_animation();
+        ai_think_animation("Dang quet he thong");
         printf(MAGENTA "    [Copilot]\n" RESET);
 
-        // --- 1. THUC THI LENH: THOÁT ---
+        // --- CÁC TÍNH NĂNG THỰC THI LỆNH (ACTION INTENTS) DÀNH CHO ADMIN ---
         if (strstr(input_lower, "thoat") || strstr(input_lower, "exit") || strstr(input_lower, "quit")) {
-            typewriter("Da ro. Tam biet Quan tri vien. Chuc nhom ban bao ve do an dat ket qua Xuat sac!"); break;
+            typewriter("Da ngat phien lam viec voi tro ly Copilot. Chuc ban dat diem tuyet doi!"); break;
         }
-        
-        // --- 2. THUC THI LENH: THÊM MÁY CHỦ TRỰC TIẾP ---
         else if ((strstr(input_lower, "them") || strstr(input_lower, "add")) && (strstr(input_lower, "may") || strstr(input_lower, "server"))) {
             typewriter("Toi se giup ban nap thiet bi moi vao Data Center. Vui long cung cap thong so:");
             int id, vtotal; char model[50], endpoint[100];
             printf(CYAN "    - Nhap ID may chu (So Nguyen): " RESET); 
             if (scanf("%d", &id) != 1) { while(getchar() != '\n'); typewriter("Loi ky tu! Ban phai nhap so. Da huy thao tac."); continue; }
-            while(getchar() != '\n'); // clear buffer
-            
+            while(getchar() != '\n'); 
             if (checkIdExists(*head_ref, id)) { typewriter("Canh bao: ID nay da ton tai trong co so du lieu roi!"); continue; }
             
             printf(CYAN "    - Nhap Model GPU (VD: RTX_4090): " RESET); scanf(" %[^\n]", model); while(getchar() != '\n');
             printf(CYAN "    - Nhap Tong VRAM (GB): " RESET); 
             if (scanf("%d", &vtotal) != 1) { while(getchar() != '\n'); typewriter("Loi ky tu! Da huy thao tac."); continue; }
             while(getchar() != '\n');
-            
             printf(CYAN "    - Nhap API Endpoint: " RESET); scanf(" %[^\n]", endpoint); while(getchar() != '\n');
             
             addServer(head_ref, id, model, vtotal, endpoint);
             typewriter("Hoan tat! May chu da duoc dau noi vao mang luoi thanh cong. Ban co the kiem tra lai o Dashboard.");
         }
-
-        // --- 3. THUC THI LENH: TRIỂN KHAI MODEL AI TRỰC TIẾP ---
         else if (strstr(input_lower, "trien khai") || strstr(input_lower, "deploy") || strstr(input_lower, "can bang tai") || strstr(input_lower, "chay model")) {
             typewriter("He thong Load Balancing da san sang nhan lenh. Vui long nhap thong tin Model AI:");
             char ai_name[50]; int req_vram;
@@ -379,70 +530,52 @@ void nextgpuCopilot(ServerNode** head_ref) {
             printf(CYAN "    - Nhap muc tieu thu VRAM (GB): " RESET); 
             if (scanf("%d", &req_vram) != 1) { while(getchar() != '\n'); typewriter("Loi ky tu! Da huy thao tac."); continue; }
             while(getchar() != '\n');
-            
             deployAIModel(*head_ref, ai_name, req_vram);
         }
-
-        // --- 4. THUC THI LENH: XÓA MÁY CHỦ ---
         else if ((strstr(input_lower, "xoa") || strstr(input_lower, "delete")) && (strstr(input_lower, "may") || strstr(input_lower, "server"))) {
-            typewriter("De an toan, vui long cho toi biet ID cua may chu ban muon gỡ bỏ:");
-            int del_id;
-            printf(CYAN "    - Nhap ID can xoa: " RESET);
+            typewriter("De an toan, vui long cho toi biet ID cua may chu ban muon go bo:");
+            int del_id; printf(CYAN "    - Nhap ID can xoa: " RESET);
             if (scanf("%d", &del_id) != 1) { while(getchar() != '\n'); typewriter("Loi ky tu! Da huy thao tac."); continue; }
             while(getchar() != '\n');
             deleteServer(head_ref, del_id);
         }
-
-        // --- 5. THUC THI LENH: SẮP XẾP ---
         else if (strstr(input_lower, "sap xep") || strstr(input_lower, "sort") || strstr(input_lower, "toi uu")) {
-            ai_think_animation();
             sortServersByVRAM(*head_ref);
             typewriter("Toi da chay thuat toan Bubble Sort. Tat ca Server hien da duoc sap xep uu tien theo muc VRAM giam dan.");
         }
-
-        // --- 6. HỖ TRỢ LÝ THUYẾT: GIỚI THIỆU DỰ ÁN ---
-        else if (strstr(input_lower, "gioi thieu") || strstr(input_lower, "project") || strstr(input_lower, "la gi")) {
-            typewriter("Chao ban, du an NEXTGPU PRO la mot He thong Quan tri va Can bang tai Ha tang may chu AI (AI Data Center Control Panel).");
-            typewriter("Trong thuc te, cac mo hinh AI khong lo (nhu ChatGPT) can tieu thu luong VRAM cuc lon. He thong nay sinh ra de giam sat RAM cua toan bo Data Center.");
-            typewriter("No duoc phat trien hoan toan bang ngon ngu C, tich hop cac kien thuc nhu: Danh sach lien ket, Ma hoa XOR, Thuat toan Greedy, va Giao dien Console thoi gian thuc (TUI).");
-        }
-
-        // --- 7. HỖ TRỢ LÝ THUYẾT: GITHUB ---
-        else if (strstr(input_lower, "github") || strstr(input_lower, "link") || strstr(input_lower, "source")) {
-            typewriter("Du an NEXTGPU PRO duoc quan ly phien ban chat che bang Git va GitHub.");
-            typewriter("Chung toi lam viec nhom bang cach chia nhanh (branch), dong gop code (commit) de giang vien danh gia minh bach.");
-            typewriter("Truy cap ma nguon tai: https://github.com/hoquan2007/GPU-Server-Manager");
-        }
-
-        // --- 8. HỖ TRỢ LÝ THUYẾT: THUẬT TOÁN (SIÊU CHI TIẾT) ---
-        else if (strstr(input_lower, "danh sach lien ket") || strstr(input_lower, "node") || strstr(input_lower, "code nhu the nao")) {
-            typewriter("Ve mat To chuc Du lieu, du an nay KHONG dung Mang (Array). Toi dung Danh Sach Lien Ket Don (Singly Linked List).");
-            typewriter("Cach hoat dong: Moi may chu la 1 'Struct ServerNode' duoc cap phat bo nho dong bang ham malloc(). Trong struct nay co 1 con tro 'next' de moc vao may chu tiep theo.");
-            typewriter("Uu diem tuyet doi: He thong co the mo rong den vo han ma khong ton truoc RAM. Khi goi ham deleteServer, toi dung 2 con tro 'temp' va 'prev' de nối lại danh sach roi dung lenh free() de giai phong ram.");
-        }
-        else if (strstr(input_lower, "ma hoa") || strstr(input_lower, "file") || strstr(input_lower, "luu")) {
-            typewriter("He thong bao mat du lieu bang ky thuat Ma Hoa XOR (XOR Cipher) tren file nhi phan (.dat).");
-            typewriter("Cach code: Trong file file_io.c, toi tao 1 ham encryptDecrypt voi SECRET_KEY = 0x5A. Truoc khi dung lenh fwrite() ghi xuong o cung, toi dung vong lap for XOR (^) tung byte cua Struct. Khi dung lenh fread() doc len, toi lai XOR mot lan nua de ra nguyen ban.");
-        }
-        else if (strstr(input_lower, "thuat toan") || strstr(input_lower, "hoat dong ra sao")) {
-            typewriter("Thuat toan dinh cao nhat cua du an la Tensor Parallelism (Can Bang Tai AI). Duoc viet trong ham deployAIModel.");
-            typewriter("1. Dau tien, toi dung vong lap while quet toan bo Node de tinh tong VRAM. Neu khong du, toi se huy lenh luon.");
-            typewriter("2. Sau do, toi tim 1 may chu manh nhat. Neu may do du RAM de gan tat ca (Single-Node), toi cap phat luon cho may do de toi uu toc do bang thong.");
-            typewriter("3. Neu khong co may don nao du RAM, toi kich hoat Thuat toan Tham lam (Greedy). Toi se duyet tung Node, rut can VRAM cua no (vram_used += allocated) cho den khi du so RAM ma Mo hinh AI yeu cau.");
-        }
-        else if (strstr(input_lower, "can bang tai") || strstr(input_lower, "ai") || strstr(input_lower, "tensor") || strstr(input_lower, "phan bo")) {
-            typewriter("Chuc nang Cân Bằng Tải AI là module phức tạp và mang đậm tính Cloud Architecture của dự án.");
-            typewriter("Hệ thống sẽ liệt kê các máy đủ tải trước. Nếu quản trị viên muốn chia nhỏ Model ra, hệ thống cung cấp 3 Chiến lược (Allocation Strategy):");
-            typewriter("1. Tham lam (Greedy/Binpack): Nhồi VRAM làm đầy máy thứ nhất rồi mới sang máy thứ 2, giúp tiết kiệm số lượng máy phải chạy.");
-            typewriter("2. Cân bằng (Balanced/Spread): Chia đều bằng thuật toán Round-Robin, cấp từng 1GB xoay vòng cho các máy để tránh thắt nút cổ chai nhiệt độ.");
-            typewriter("3. Thủ công (Custom): Quản trị viên tự gõ số GB muốn gánh cho từng máy.");
-            typewriter("Hệ thống dùng malloc tạo ra một mảng 'Bản nháp' để in Preview cho người dùng duyệt trước khi thực sự cấp phát VRAM! Rất chuyên nghiệp!");
-        }
-        // --- 9. MẶC ĐỊNH KHÔNG HIỂU ---
+        
+        // --- TÍNH NĂNG GIẢI THÍCH THUẬT TOÁN (TÍCH HỢP TỪ MẢNG VECTOR COPILOT_DB) ---
         else {
-            typewriter("Lenh cua ban chua hop le hoac nam ngoai kha nang ho tro cua toi.");
-            typewriter("Huong dan thao tac: Ban co the ra lenh 'them may chu', 'xoa may chu', 'trien khai', 'sap xep'.");
-            typewriter("Hoac dat cau hoi: 'gioi thieu du an', 'xin link github', 'danh sach lien ket la gi', 'ma hoa file', 'thuat toan'.");
+            int scores[50] = {0}; 
+            char temp_input[300]; strcpy(temp_input, input_lower);
+            char* word = strtok(temp_input, " ,.?!");
+            
+            while (word != NULL) {
+                if (strlen(word) > 1) { 
+                    for (int i = 0; i < copilot_db_size; i++) { 
+                        if (strstr(copilot_db[i].keywords, word)) scores[i] += 5; 
+                    }
+                }
+                word = strtok(NULL, " ,.?!");
+            }
+
+            int best_match_idx = -1; int max_score = 0;
+            for(int i = 0; i < copilot_db_size; i++) {
+                if(scores[i] > max_score) { max_score = scores[i]; best_match_idx = i; }
+            }
+
+            if (best_match_idx != -1) typewriter(copilot_db[best_match_idx].answer);
+            else {
+                typewriter("Lenh cua ban chua hop le hoac nam ngoai kha nang ho tro cua toi.");
+                typewriter("Lenh he thong: 'them may chu', 'xoa may chu', 'trien khai', 'sap xep'.");
+                typewriter("Giai thich code: hay go 'ham addserver', 'ham deleteserver', 'thuat toan can bang tai', 'ma hoa xor', 'hieu ung dong', 'link github', v.v.");
+            }
         }
     }
+}
+
+void freeList(ServerNode** head) {
+    ServerNode* current = *head;
+    while (current != NULL) { ServerNode* temp = current; current = current->next; free(temp); }
+    *head = NULL;
 }

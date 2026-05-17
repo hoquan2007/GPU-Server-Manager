@@ -367,16 +367,16 @@ Knowledge chat_db[] = {
     {"hello chao xin chao hi hey alo phien chao", 
      "Xin chao Quan tri vien! Toi la thiet bi Mo hinh AI da duoc ban trien khai thanh cong vao phien lam viec thoi gian thuc cua Cluster. Toi da nap tri thuc toan cau qua song mang va san sang tiep nhan cac yeu cau tinh toan tu ban."},
     
-    {"ai tao ra ban phat trien dev coder tac gia sinh vien hoan thanh hoquan2007", 
-     "Toi duoc thiet ke, xay dung va toi uu hoa kien truc boi "},
+    {"tao ra ban phat trien dev coder tac gia sinh vien hoan thanh hoquan2007", 
+     "Toi duoc thiet ke, xay dung va toi uu hoa kien truc boi nhom it utc2 gom 4 thanh vien : QUAN , PHONG X2 , TUONG . "},
     
-    {"github link source code repo ma nguon repository project", 
+    {"github link source code repo ma nguon repository", 
      "Ma nguon cua toan bo sieu du an NEXTGPU PRO nay duoc mo hoan toan (Open Source). Ban co the truy cap vao Repository chinh thuc cua tac gia tai link GitHub nay de tai code, xem commit va ho tro dong gop nhe: https://github.com/hoquan2007/GPU-Server-Manager"},
     
     {"c code c++ pointer node danh sach lien ket malloc free struct ram memory bo nho", 
      "Trong the gioi C thuan, quan ly bo nho bang con tro la ky thuat cao cap nhat. Du an nay su dung 'Singly Linked List' (Danh sach lien ket don). Moi nut la mot 'struct ServerNode' duoc cap phat dong tren Heap bang malloc(). Dieu nay giup tiet kiem RAM toi da, co the mo rong den vo tan may chu ma khong can khai bao mang co dinh."},
     
-    {"ai vram gpu card nvidia rtx amd tai nguyen chip hardware phan cung", 
+    {"vram gpu card nvidia rtx amd tai nguyen chip hardware phan cung", 
      "VRAM (Video RAM) la linh hon cua AI Data Center. Cac mo hinh LLM can khoang trong VRAM cuc lon de luu tru ma tran phan bo trong so. He thong NEXTGPU co kha nang do dac va phan phoi VRAM tren cac dong card tu RTX 3050 den RTX 5090 cho toi cac the he kien truc cao cap nhat phuc vu AI."},
     
     {"bug loi error crash system.log debug gach do compile xoa man hinh", 

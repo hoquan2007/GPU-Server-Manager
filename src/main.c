@@ -203,7 +203,7 @@ int main() {
                 printf("    |  ID May Chu (So)   : [                               ] |\n");
                 printf("    |  Model GPU         : [                               ] |\n");
                 printf("    |  Tong VRAM (GB)    : [                               ] |\n");
-                printf("    |  API Endpoint      : [ " YELLOW "Go '0' de tao Auto IP" RESET CYAN "          ] |\n"); 
+                printf("    |  API Endpoint      : [ " YELLOW "Go '0' de tao Auto IP" RESET CYAN "         ] |\n"); 
                 printf("    +--------------------------------------------------------+\n" RESET);
 
                 while (1) {

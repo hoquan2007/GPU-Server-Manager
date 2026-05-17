@@ -182,6 +182,7 @@ void displayServers(ServerNode* head, int is_live, int uptime_seconds, int blink
     printf(CYAN "    +----------+----------------------+---------------------------+-------------------------------------+-----------+\n" RESET);
 }
 
+
 void deleteServer(ServerNode** head, int id) {
     ServerNode *temp = *head, *prev = NULL;
     if (temp != NULL && temp->server_id == id) {

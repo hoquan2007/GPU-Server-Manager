@@ -31,7 +31,7 @@ void deleteServer(ServerNode** head, int id);
 void sortServersByVRAM(ServerNode* head);
 void toggleServerStatus(ServerNode* head, int id);
 
-// --- TÍNH NĂNG MỚI ĐƯỢC THÊM ---
+
 void undeployAIModel(ServerNode* head, int id);
 void loadAIModels();
 void saveAIModels();

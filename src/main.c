@@ -108,7 +108,7 @@ void showBootScreen() {
     printf(WHITE "\n    [ Dang thiet lap giao dien Web UI ]\n" RESET);
     printf("    [");
     for(int i = 0; i < 50; i++) {
-        // Su dung dau bang (=) tieu chuan chong loi font hien thi
+   
         printf(CYAN "=" RESET); fflush(stdout); delay(15);
     }
     printf("] 100%%\n"); delay(400);

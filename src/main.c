@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "../include/server_list.h"
 #include "../include/file_io.h"
@@ -38,15 +39,16 @@ void delay(int milliseconds) {
 }
 
 void pauseAndClear() {
-    printf(CYAN "\n    ... Nhan phim bat ky de tro ve Menu chinh ..." RESET);
+    printf(CYAN "\n    ... Nhan phim bat ky de tro ve Menu chinh \033[5m_\033[0m" RESET);
     _getch(); 
 }
 
 void printHeader() {
     printf("\033[H\033[J"); 
-    printf(CYAN "    +================================================================================================================+\n");
-    printf("    |                                " BOLD "NEXTGPU PRO - DATA CENTER CONTROL PANEL" RESET CYAN "                                         |\n");
-    printf("    +================================================================================================================+\n" RESET);
+    // Giam do dai cac duong ke xuong con 68 ky tu de chong loi tran vien (Wrapping)
+    printf(CYAN "    +====================================================================+\n");
+    printf("    |              " BOLD WHITE "NEXTGPU PRO - DATA CENTER CONTROL PANEL" RESET CYAN "               |\n");
+    printf("    +====================================================================+\n" RESET);
 }
 
 void showBootScreen() {
@@ -97,49 +99,56 @@ void showBootScreen() {
         fflush(stdout); delay(120);     
     }
 
-    printf(CYAN "    [*] Kiem tra tram dieu khien: Intel Core i7, RTX 5060 8GB VRAM, 16GB RAM... " GREEN "[OK]\n" RESET); delay(300);
+    printf(CYAN "    [*] Kiem tra he thong: Intel Core i7, 16GB RAM... " GREEN "[OK]\n" RESET); delay(300);
     printf(CYAN "    [*] Khoi tao NEXTGPU Kernel (v8.0.0-core)...\n" RESET); delay(200);
-    printf(CYAN "    [*] Dang nap module bao mat RSA-2048 & XOR Cipher... " GREEN "[OK]\n" RESET); delay(300);
-    printf(CYAN "    [*] Quet mang luoi phan tan (Distributed Node Check)...\n" RESET); delay(400);
+    printf(CYAN "    [*] Dang nap module bao mat RSA & XOR Cipher... " GREEN "[OK]\n" RESET); delay(300);
+    printf(CYAN "    [*] Quet mang luoi phan tan (Distributed Node)...\n" RESET); delay(400);
     printf(YELLOW "    [!] Phat hien 1 thiet bi offline. Da bo qua.\n" RESET); delay(300);
 
     printf(WHITE "\n    [ Dang thiet lap giao dien Web UI ]\n" RESET);
     printf("    [");
     for(int i = 0; i < 50; i++) {
-        printf(GREEN "=" RESET); fflush(stdout); delay(15);
+        // Su dung dau bang (=) tieu chuan chong loi font hien thi
+        printf(CYAN "=" RESET); fflush(stdout); delay(15);
     }
     printf("] 100%%\n"); delay(400);
 }
 
 int interactiveMenu() {
     const char* options[] = {
-        "Hien thi Dashboard ha tang (Live Monitor)",
-        "Them may chu GPU moi vao he thong",
-        "Trien khai Model AI (Can bang tai phan tan)",
-        "Tuong tac voi AI Model (Terminal Chat)",      
-        "Go bo may chu (Thanh ly phan cung)",
-        "Sap xep may chu theo VRAM (Toi uu hoa)",
-        "Bao tri may chu (Chuyen trang thai Online/Offline)",
-        "Xuat bao cao he thong (Dinh dang Excel/CSV)",
-        "NEXTGPU Copilot (AI tu dong dieu hanh & Giai thich)",
-        "Thoat chuong trinh & Luu tru du lieu an toan"
+        "[1]  Hien thi Dashboard ha tang (Live Monitor)",
+        "[2]  Them may chu GPU moi vao he thong",
+        "[3]  Trien khai Model AI (Can bang tai phan tan)",
+        "[4]  Go bo Model AI khoi may chu (Giai phong VRAM)", 
+        "[5]  Go bo may chu (Thanh ly phan cung)",
+        "[6]  Sap xep may chu theo VRAM (Toi uu hoa)",
+        "[7]  Bao tri may chu (Chuyen trang thai On/Off)",
+        "[8]  Xuat bao cao he thong (Dinh dang Excel/CSV)",
+        "[9]  Tuong tac voi AI Model (Terminal Chat)",      
+        "[10] NEXTGPU Copilot (AI dieu hanh & Giai thich)",
+        "[0]  Thoat chuong trinh & Luu tru du lieu an toan"
     };
-    int num_options = 10; int selected = 0; int key;
+    int num_options = 11; int selected = 0; int key;
 
     while(1) {
         printHeader(); printf("\n");
         for(int i = 0; i < num_options; i++) {
             if(i == selected) {
-                printf("\033[47m\033[30m" BOLD "      >> %-99s \033[0m\n", options[i]);
+                // Background Cyan, text den, dai 60 ky tu giup vua khit man hinh
+                printf("\033[46m\033[30m" BOLD "      >> %-60s \033[0m\n", options[i]);
             } else {
-                if (i == 9) printf(RED "         %-99s \n" RESET, options[i]); 
-                else if (i == 8) printf(MAGENTA "         %-99s \n" RESET, options[i]);
-                else printf(GREEN "         %-99s \n" RESET, options[i]); 
+                // Hai khoi AI [9] va [10] da duoc gom chung mau Tim cuc net
+                if (i == 10) printf(RED "         %-60s \n" RESET, options[i]);                      
+                else if (i == 8 || i == 9) printf(MAGENTA "         %-60s \n" RESET, options[i]);    
+                else if (i == 3 || i == 4) printf(YELLOW "         %-60s \n" RESET, options[i]);     
+                else if (i == 5 || i == 6) printf(GREEN "         %-60s \n" RESET, options[i]);      
+                else if (i == 7) printf(WHITE "         %-60s \n" RESET, options[i]);                
+                else printf(CYAN "         %-60s \n" RESET, options[i]);                              
             }
         }
         
-        printf(CYAN "\n    ------------------------------------------------------------------------------------------------------------------\n" RESET);
-        printf(YELLOW "      [SU DUNG PHIM " BOLD "MUI TEN" RESET YELLOW " DE DI CHUYEN, PHIM " BOLD "ENTER" RESET YELLOW " DE CHON] \n" RESET);
+        printf(CYAN "\n    ----------------------------------------------------------------------\n" RESET);
+        printf(YELLOW "      [DUNG MUI TEN DE DI CHUYEN - PHIM ENTER DE CHON] \n" RESET);
 
         key = _getch();
         if (key == 224 || key == 27) { 
@@ -147,7 +156,7 @@ int interactiveMenu() {
             if (key == 72 || key == 65) { selected--; if (selected < 0) selected = num_options - 1; } 
             else if (key == 80 || key == 66) { selected++; if (selected >= num_options) selected = 0; }
         } else if (key == 13 || key == 10) { 
-            if (selected == 9) return 0; 
+            if (selected == 10) return 0; 
             return selected + 1;         
         }
     }
@@ -161,7 +170,10 @@ int main() {
     char log_buffer[256]; 
     
     showBootScreen();
+    
     loadFromFile(&server_list, "data/gpu_servers.dat");
+    loadAIModels(); 
+    
     writeSystemLog("SYSTEM: Nguoi dung khoi dong he thong NEXTGPU PRO.");
 
     while (1) {
@@ -191,7 +203,7 @@ int main() {
                 printf("    |  ID May Chu (So)   : [                               ] |\n");
                 printf("    |  Model GPU         : [                               ] |\n");
                 printf("    |  Tong VRAM (GB)    : [                               ] |\n");
-                printf("    |  API Endpoint      : [                               ] |\n");
+                printf("    |  API Endpoint      : [ " YELLOW "Go '0' de tao Auto IP" RESET CYAN "          ] |\n"); 
                 printf("    +--------------------------------------------------------+\n" RESET);
 
                 while (1) {
@@ -205,7 +217,16 @@ int main() {
 
                 printf("\033[9;29H"); scanf(" %[^\n]", model); while(getchar() != '\n');
                 printf("\033[10;29H"); scanf("%d", &vtotal); while(getchar() != '\n');
-                printf("\033[11;29H"); scanf(" %[^\n]", endpoint); while(getchar() != '\n');
+                
+                printf("\033[11;29H"); 
+                scanf(" %[^\n]", endpoint); while(getchar() != '\n');
+                
+                if (strcmp(endpoint, "0") == 0) {
+                    sprintf(endpoint, "http://192.168.1.%d:11434/api", rand() % 200 + 10);
+                    printf("\033[11;29H%-31s", endpoint); 
+                    fflush(stdout);
+                    delay(400); 
+                }
 
                 printf("\033[14;1H\033[J"); 
                 printf(CYAN "    [*] Dang thiet lap ket noi ICMP den %s...\n" RESET, endpoint); delay(600);
@@ -244,12 +265,26 @@ int main() {
                 pauseAndClear(); 
                 break;
             }
-            case 4: {
-                interactWithModel(&server_list);
+            case 4: { 
+                int free_id;
+                printf(CYAN "\n    +--------------------------------------------------------+\n");
+                printf("    |            " YELLOW "[x] GO BO MODEL AI (FREE VRAM)" RESET CYAN "              |\n");
+                printf("    +--------------------------------------------------------+\n");
+                printf("    |  Nhap ID may chu   : [                               ] |\n");
+                printf("    +--------------------------------------------------------+\n" RESET);
+                printf("\033[8;29H"); 
+                if (scanf("%d", &free_id) == 1) { 
+                    while(getchar() != '\n'); printf("\033[11;1H"); 
+                    undeployAIModel(server_list, free_id); 
+                    
+                    sprintf(log_buffer, "ACTION: Giai phong VRAM AI tren may chu ID %d.", free_id);
+                    writeSystemLog(log_buffer);
+                } 
+                else { while(getchar() != '\n'); }
                 pauseAndClear(); 
                 break;
             }
-            case 5: {
+            case 5: { 
                 int del_id;
                 printf(CYAN "\n    +--------------------------------------------------------+\n");
                 printf("    |                " RED "[-] THANH LY MAY CHU GPU" RESET CYAN "                |\n");
@@ -301,7 +336,12 @@ int main() {
                 pauseAndClear(); 
                 break;
             }
-            case 9: {
+            case 9: { 
+                interactWithModel(&server_list);
+                pauseAndClear(); 
+                break;
+            }
+            case 10: {
                 writeSystemLog("SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.");
                 nextgpuCopilot(&server_list); 
                 pauseAndClear(); 
@@ -313,7 +353,7 @@ int main() {
                 printf(GREEN "    He thong tat an toan. Tam biet!\n\n" RESET);
                 return 0;
             }
-        } // KET THUC SWITCH
-    } // KET THUC WHILE
+        } 
+    } 
     return 0;
 }

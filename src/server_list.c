@@ -101,9 +101,11 @@ void displayServers(ServerNode* head, int is_live, int uptime_seconds, int blink
         for (int i = 0; i < bar_length; i++) { if (i < filled) strcat(bar, "#"); else strcat(bar, "."); }
 
         printf(CYAN "    |" RESET " %-8d " CYAN "|" RESET " %-20s " CYAN "|", temp->server_id, temp->gpu_model);
-        printf(RESET "  %2d/%2dGB [", temp->vram_used, temp->vram_total);
-        if (percent >= 80) printf(RED "%s" RESET, bar); else if (percent >= 50) printf(YELLOW "%s" RESET, bar); else printf(GREEN "%s" RESET, bar); 
-        printf("]      " CYAN "|"); 
+        printf(RESET " %2d/%2dGB [", temp->vram_used, temp->vram_total);
+        if (percent >= 80) printf(RED "%s" RESET, bar); 
+        else if (percent >= 50) printf(YELLOW "%s" RESET, bar);
+        else printf(GREEN "%s" RESET, bar); 
+        printf("]      " CYAN "|");
         
         printf(RESET " %-35s " CYAN "|", temp->api_endpoint);
         if (temp->status == 1) printf(GREEN " %-9s " CYAN "|\n" RESET, "Online"); else printf(RED " %-9s " CYAN "|\n" RESET, "Offline");

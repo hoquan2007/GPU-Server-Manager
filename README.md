@@ -46,7 +46,7 @@ Dự án áp dụng sâu sắc các cấu trúc dữ liệu và giải thuật c
 ### 1. Tải dự án về máy (Clone)
 Mở Terminal/Git Bash và chạy lệnh sau để tải toàn bộ mã nguồn về máy:
 ```bash
-git clone [https://github.com/hoquan2007/GPU-Server-Manager.git](https://github.com/hoquan2007/GPU-Server-Manager.git)
+git clone https://github.com/hoquan2007/GPU-Server-Manager.git
 cd GPU-Server-Manager
 
 2. Biên dịch mã nguồn (Compile)

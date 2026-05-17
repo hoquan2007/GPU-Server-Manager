@@ -365,73 +365,161 @@ typedef struct { char keywords[150]; char answer[800]; } Knowledge;
 // CON AI SO 1: KNOWLEDGE DATA SEGMENT (MANG KHONG LO CHO TERMINAL CHAT)
 // =====================================================================
 Knowledge chat_db[] = {
-    {"hello chao xin chao hi hey alo phien chao", 
-     "Xin chao Quan tri vien! Toi la thiet bi Mo hinh AI da duoc ban trien khai thanh cong vao phien lam viec thoi gian thuc cua Cluster. Toi da nap tri thuc toan cau qua song mang va san sang tiep nhan cac yeu cau tinh toan tu ban."},
+    // ================= [ NHÓM 1: THÔNG TIN DỰ ÁN & CHÀO HỎI ] =================
+    {"hello chao xin_chao hi hey alo", 
+     "Xin chao Quan tri vien! Toi la thiet bi Mo hinh AI da duoc ban trien khai thanh cong. Toi da nap tri thuc toan cau qua song mang va san sang tiep nhan cac yeu cau tinh toan tu ban."},
     
-    {"tao ra ban phat trien dev coder tac gia sinh vien hoan thanh hoquan2007", 
-     "Toi duoc thiet ke, xay dung va toi uu hoa kien truc boi nhom it utc2 gom 4 thanh vien : QUAN , PHONG X2 , TUONG . "},
+    {"tac_gia dev coder nhom_it_utc2 hoquan2007 sinh_vien", 
+     "Toi duoc thiet ke, xay dung va toi uu hoa kien truc boi nhom IT UTC2 gom 4 thanh vien: QUAN, PHONG X2, TUONG."},
     
-    {"github link source code repo ma nguon repository", 
-     "Ma nguon cua toan bo sieu du an NEXTGPU PRO nay duoc mo hoan toan (Open Source). Ban co the truy cap vao Repository chinh thuc cua tac gia tai link GitHub nay de tai code, xem commit va ho tro dong gop nhe: https://github.com/hoquan2007/GPU-Server-Manager"},
+    {"github link source_code ma_nguon repo repository open_source", 
+     "Ma nguon sieu du an NEXTGPU PRO duoc mo hoan toan. Truy cap Repository chinh thuc de tai code va ho tro dong gop: https://github.com/hoquan2007/GPU-Server-Manager"},
     
-    {"c code c++ pointer node danh sach lien ket malloc free struct ram memory bo nho", 
-     "Trong the gioi C thuan, quan ly bo nho bang con tro la ky thuat cao cap nhat. Du an nay su dung 'Singly Linked List' (Danh sach lien ket don). Moi nut la mot 'struct ServerNode' duoc cap phat dong tren Heap bang malloc(). Dieu nay giup tiet kiem RAM toi da, co the mo rong den vo tan may chu ma khong can khai bao mang co dinh."},
+    {"giang_vien thay_co cham_diem bao_ve do_an diem_cao hoi_dong", 
+     "Kinh chao Thay/Co trong Hoi dong! Nhom chung em da doc luc thiet ke he thong bang C thuan voi kien truc phan tan va can bang tai. Rat mong nhan duoc su danh gia cao tu Thay/Co!"},
     
-    {"vram gpu card nvidia rtx amd tai nguyen chip hardware phan cung", 
-     "VRAM (Video RAM) la linh hon cua AI Data Center. Cac mo hinh LLM can khoang trong VRAM cuc lon de luu tru ma tran phan bo trong so. He thong NEXTGPU co kha nang do dac va phan phoi VRAM tren cac dong card tu RTX 3050 den RTX 5090 cho toi cac the he kien truc cao cap nhat phuc vu AI."},
+    {"huong_dan menu cach_dung phim_tat dieu_huong tui", 
+     "Giao dien van hanh qua TUI (Text User Interface). Dung mui ten Len/Xuong de chon, Enter de thuc thi. Ban co the them/xoa node, trien khai AI hoac xem Live Monitor de dang."},
+
+    // ================= [ NHÓM 2: KIẾN TRÚC C LÕI & GIAO DIỆN ] =================
+    {"ngon_ngu_c gcc compiler bien_dich source c_thuan", 
+     "Toi chay nguyen ban tren 100% ngon ngu C tieu chuan (C99/C11) duoc bien dich boi GCC. Toan bo thuat toan duoc code tay ma khong dung framework hay thu vien do hoa ben thu 3."},
     
-    {"bug loi error crash system.log debug gach do compile xoa man hinh", 
-     "He thong duoc bao ve kien co qua file log. Neu phat hien loi, hay mo 'data/system.log' de dieu tra. De chong crash man hinh xanh (BSoD), toan bo cac ham doc ghi deu dung bo dem chuoi an toan va co che kiem tra con tro NULL phat hien loi ngay tu trong trung!"},
+    {"pointer node danh_sach_lien_ket malloc free struct con_tro bo_nho heap", 
+     "Du an su dung 'Singly Linked List' kem cap phat dong tren Heap bang malloc(). Dieu nay giup mo rong Data Center vo tan ma khong bi tran bo nho, ket hop free() de chong Memory Leak."},
     
-    {"giang vien thay co cham diem bao ve do an diem cao xuat sac trinh bay", 
-     "Kinh chao Thay/Co trong Hoi dong! Nhom chung em da doc luc thiet ke toan bo he thong nay bang C thuan. Tich hop kien truc mang phan tan gia lap, thuat toan load balancing song song va ma hoa XOR mat ma file. Chung em rat mong nhan duoc su danh gia cao va diem so xuat sac nhat tu Thay/Co!"},
+    {"giao_dien console ansi_escape system_cls chong_giat fps overwrite", 
+     "Giao dien khong xai system('cls') gay giat. He thong dung ma ANSI '\\033[H' de day con tro len goc (0,0) va ghi de khung hinh moi, giup do hoa render muot ma 60fps!"},
     
-    {"huong dan su dung tinh nang menu cach dung huong dan tui", 
-     "Giao dien van hanh qua TUI (Text User Interface). Dung mui ten Len/Xuong de chon, Enter de thuc thi. Khong can nhap so lo si. Ban co the them/xoa node, trien khai AI, xem Live Monitor hay chat truc tiep voi toi tai Menu 4."},
+    {"typewriter hieu_ung_go putchar fflush delay mili_giay", 
+     "Hieu ung go chu ban dang thay dung ham putchar() xuat tung ky tu, ket hop fflush(stdout) va vong lap delay() de mo phong 100% cam giac AI dang suy nghi va tao ra van ban."},
     
-    {"internet mang ket noi toc do latency ping huggingface cloud websockets api", 
-     "Toi duoc tich hop mo phong ket noi Internet qua giao thuc ICMP va WebSockets. Khi chat, AI se gia lap kenh truyen dong bo toi HuggingFace Hub. Toc do phan hoi tren Console dao dong tu 60 den 150 tokens/giay tuy thuoc vao luong VRAM duoc cap phat voi do tre thap hinh thanh giong het the gioi thuc."},
+    {"bug loi error crash system.log debug log_file bsod", 
+     "He thong duoc bao ve qua file log. Mo 'data/system.log' de dieu tra. De chong crash, cac ham doc ghi deu dung bo dem an toan va kiem tra con tro NULL nghiem ngat."},
+
+    // ================= [ NHÓM 3: CÂN BẰNG TẢI & THUẬT TOÁN ] =================
+    {"can_bang_tai load_balancing parallel split tensor shards phan_tan", 
+     "Module load balancing la kiet tac. Thuat toan Tensor Parallelism se cat mo hinh AI thanh nhieu manh (shards) va phan phoi sang cac may chu dang ranh, ghep VRAM lai de ganh model nang."},
     
-    {"hom nay thoi gian ngay thang gio calendar clock uptime difftime", 
-     "Toi la AI Console nen khong lay dong ho thoi gian thuc cua Windows vao doan chat. Nhung ban co the nhin tren Dashboard, he thong NEXTGPU dang dung ham 'difftime()' va thu vien <time.h> de dem thoi gian Uptime hoat dong cua Server tinh tu luc boot chuong trinh den tung giay ngoc nga."},
+    {"greedy tham_lam binpack don_tai", 
+     "Chien luoc Tham lam (Greedy) quet tuyen tinh, nhoi day 100% VRAM cua may so 1 roi moi qua may 2. Giup don tai vao 1 cum nho de tiet kiem dien nang cho cac may khac."},
     
-    {"giao dien man hinh ui console tui ansi escape xoa man hinh chong giat system cls", 
-     "Giao dien khong xai lenh system('cls') ngoc nghech gay giat man hinh. He thong dung Ma dieu khien ANSI Escape Sequence '\\033[H' de day con tro chuot nguoc len dong 0 cot 0 cua Terminal va ve de khung hinh moi. Ket hop lenh fflush(stdout) ep do hoa render cuc ky muot ma khung hinh 60fps tren console C!"},
+    {"balanced can_bang round_robin tan_nhiet nhiet_do", 
+     "Chien luoc Can bang (Balanced) dung thuat toan Round-Robin de xoay vong chia deu tai (VD: moi may 1GB). Giup tan nhiet deu, chong nghen co chai nhiet (Thermal Throttling)."},
     
-    {"ngon ngu lap trinh ngon ngu gi c thuan source code gcc", 
-     "Toi chay nguyen ban tren 100% ngon ngu C tieu chuan (C99/C11) duoc bien dich boi GCC. Toan bo thuat toan tu quan ly mang luoi, cat nho du lieu cho den phan tich cham diem ngon ngu tu nhien deu tu code bang tay 100% ma khong dung bat ky framework hay thu vien do hoa ben thu 3 nao."},
+    {"custom thu_cong tu_nhap phan_bo ep_ram", 
+     "Chien luoc Thu cong mang lai quyen kiem soat cho Admin. Ban tu tay go so luong RAM muon ep cho tung ID may chu, rat phu hop cho ha tang thiet bi khong dong nhat."},
     
-    {"deepseek chatgpt claude gpt llm mo hinh model ai chatbot llama", 
-     "Toi ho tro mo phong toan bo kien truc chay infer cua cac sieu LLM thuc te hien nay nhu DeepSeek-R1, GPT-4o, Claude 3.5 hoac LLaMa 3. Khi ban nap vao he thong, toi se kiem tra xem kien truc phan tan co ganh noi ty ty tham so cua cac mo hinh nay hay khong."},
+    {"bubble_sort sap_xep noi_bot swap giam_dan tang_dan data_payload", 
+     "Thuat toan Bubble Sort tren Linked List cua du an khong hoan doi con tro de tranh dut chuoi memory. No giu nguyen khung xuong, chi swap phan Data Payload, luon day may manh nhat len dau."},
     
-    {"can bang tai load balancing phan tan parallel split phan chia tensor", 
-     "Module load balancing la kiet tac. Neu mot card GPU bi thieu VRAM, thuat toan Tensor Parallelism se tu dong cat mo hinh AI thanh nhieu manh (shards) va phan phoi luong cong viec sang cac cum may chu con trong, ghep vram lai de ganh chung model nang. Day la cach OpenAI chay ChatGPT!"},
+    {"ma_hoa xor_cipher nhi_phan secret_key security bao_mat data_file", 
+     "Du lieu file .dat duoc ma hoa bang XOR Cipher (Key: 0x5A) truc tiep tren RAM. Thuat toan dat toc do O(1). Hacker dung Notepad mo ra chi thay ky tu rac, bao ve tuyet doi IP ha tang."},
     
-    {"greedy tham lam chien luoc thuat toan greedy algorithm binpack", 
-     "Chien luoc Tham lam (Greedy) hoat dong giong 'Binpack'. He thong quet tu tren xuong, rut can vram cua may chu dau tien cho den khi day 100% roi moi chuyen sang may ke tiep. Chien luoc nay giup don model vao 1 cum nho nhat co the de tiet kiem dien nang cho cac may con lai trong Data Center."},
+    {"csv excel xuat_file bao_cao spreadsheet comma_separated", 
+     "Tinh nang xuat file dung fopen() voi che do 'w'. Cac truong du lieu cua struct duoc noi bang dau phay ','. Excel hay Google Sheets se tu dong doc dau phay nay de chia cot bao cao."},
+
+    // ================= [ NHÓM 4: HARDWARE, CLOUD & NETWORK ] =================
+    {"vram gpu nvidia rtx amd hardware phan_cung card_do_hoa", 
+     "VRAM la linh hon cua AI Data Center. He thong NEXTGPU co kha nang do dac va phan phoi VRAM tren moi dong card (tu RTX 3060 den H100) de dam bao chay muot cac mo hinh LLM khong lo."},
     
-    {"balanced can bang spread round robin deu tai on dinh nhiet do", 
-     "Chien luoc Can bang (Balanced) dung thuat toan Round-Robin de boi vao moi node online dung 1 GB VRAM moi luot, xoay vong lien tuc qua tat ca cac may cho den khi du VRAM. Chien luoc nay giup tan nhiet deu tren tat ca cac card, giup tang tuoi tho cho phan cung."},
+    {"cpu ram motherboard mainboard ssd hdd storage", 
+     "Ben canh GPU, Server con can CPU (xu ly logic) va bo nho luu tru toc do cao (NVMe SSD) de doc file Model AI dung luong hang chuc GB len RAM he thong truoc khi day vao VRAM."},
     
-    {"custom thu cong tu nhap phan bo cat vram nhap so", 
-     "Chien luoc Thu cong mang lai quyen kiem soat tuyet doi cho Quan tri vien. He thong in ra mot bang nhap lieu dynamic, ban tu tay go so luong RAM muon ep cho tung ID may chu ganh. Cuc ky phu hop cho ha tang thieu dong nhat."},
+    {"internet ket_noi latency ping websockets api mang_lan icmp", 
+     "Toi tich hop mo phong ket noi Internet qua giao thuc ICMP va WebSockets. Toc do phan hoi tren Console dao dong tu 60-150 tokens/s tuy thuoc luong VRAM cap phat, mo phong y het thuc te."},
     
-    {"ma hoa xor cipher dat bao mat security file nhi phan bi mat", 
-     "Du lieu he thong 'gpu_servers.dat' duoc ma hoa tuyet doi bang thuat toan XOR Cipher voi ma khoa SECRET_KEY 0x5A. Khi luu chuong trinh, toan bo vung nho cua struct se duoc phep toan bitwise XOR (^) de hoan doi bit. Hacker dung Notepad mo file ra chi thay ma rac ma khong the danh cap data."},
+    {"thoi_gian uptime difftime dong_ho calendar time.h", 
+     "He thong NEXTGPU dung ham difftime() va thu vien <time.h> de dem thoi gian Uptime hoat dong cua Server tinh tu luc boot chuong trinh tren Dashboard Live Monitor."},
     
-    {"bubble sort sap xep noi bot hoan doi swap giam dan tang dan vram_total", 
-     "Thuat toan sap xep cua du an la Bubble Sort tren kien truc Linked List. Thong thuong lap trinh vien non tay se doi vi tri cac con tro 'next' gay dut chuoi memory. Code nay giu nguyen mau noi cua cac node, chi thuc hien hoan doi noi dung du lieu ben trong, luon giup Server manh nhat troi len dau."},
+    {"cloud aws azure gcp aws_ec2 dam_may vps", 
+     "He thong nay mo phong kien truc cua Cloud Computing. Giong nhu viec ban thue the loai may chu EC2 p4d (chua GPU NVIDIA A100) tren AWS de chay he thong tri tue nhan tao."},
     
-    {"csv excel xuat file bao cao baocao_gpu.csv open openmo", 
-     "Khi ban chon xuat file, he thong dung ham fopen() voi che do 'w' (write text). Cac truong du lieu cua struct se duoc noi voi nhau bang dau phay ',' kien truc tieu chuan cua the loai CSV. Microsoft Excel hay Google Sheets se tu dong doc dau phay nay de chia cot ra ban bao cao tai chinh tuyet dep."},
+    {"linux ubuntu centos server os he_dieu_hanh unix bash_shell", 
+     "Trong thuc te, hau het cac AI Data Center deu chay tren he dieu hanh Linux (Ubuntu/CentOS). Ma nguon C cua du an nay cung co the port sang Linux rat de dang chi voi vai lenh makefile."},
     
-    {"typewriter hieu ung go chu chu chay putchar fflush thoi gian tre", 
-     "Hieu ung go chu ma ban dang doc duoc xay dung bang vong lap duyet tung ky tu cua chuoi mang. Dung ham putchar() de xuat tung ky tu ra console, roi ep xoa bo dem tuc thi bang fflush(stdout), ngung tre khoang 10 miligiay bang vong lap time clock(). Kieu viet nay mo phong 100% cam giac ChatGPT dang tao ra van ban."},
+    {"tcp ip udp giao_thuc port socket ban_tin packet", 
+     "Giao thuc TCP dam bao goi tin API dieu khien tu Master den Worker khong bi that lac. Con giao thuc UDP thuong duoc dung de stream log metrics vi toc do cuc nhanh nhung co the rot goi."},
     
-    {"compiler gcc terminal chay code compile exe powershell cmd bash", 
-     "Chuong trinh duoc build thong qua trinh bien dich GCC. Qua trinh linkage (lien ket) noi 3 file main.c, server_list.c va file_io.c lai voi nhau. Ban chi can chay file .exe thuc thi. Du an nay toi uu tuyet doi nen dung luong memory footprint sieu nho nhe tren moi he dieu hanh Windows."}
+    {"ssh remote putty terminal truy_cap_tu_xa", 
+     "De quan tri cac Worker Nodes o xa, ky su thuong dung giao thuc SSH (Secure Shell) thong qua port 22. Giao thuc nay ma hoa toan bo phien go phim cua ban chong nghe len."},
+
+    // ================= [ NHÓM 5: AI & LARGE LANGUAGE MODELS (LLMs) ] =================
+    {"deepseek chatgpt claude gpt llm model chatbot llama", 
+     "He thong mo phong kien truc infer cua cac sieu LLM nhu DeepSeek-R1, GPT-4, LLaMA 3. NEXTGPU se kiem tra xem mang luoi co du VRAM de ganh noi hang ty tham so cua chung hay khong."},
+    
+    {"machine_learning deep_learning neural_network train epoch", 
+     "Model LLM duoc huan luyen (Training) tren mang neural network khong lo. Tuy nhien, he thong NEXTGPU cua chung ta tap trung chu yeu vao viec Suy luan (Inference) cho nguoi dung cuoi."},
+    
+    {"prompt context token context_window fine_tuning", 
+     "AI nhan dau vao la cac Prompt. Gioi han cua AI nam o Context Window (so luong Token toi da nhan duoc). Khi vuot qua, AI se 'quen' phan dau cau chuyen."},
+    
+    {"vector_database nlp_scoring nhan_dien_ngu_nghia tokenizer bag_of_words", 
+     "Bot Copilot su dung thuat toan NLP Scoring thu nho. strtok() bam nho cau, sau do cong don diem so (Accumulated Scoring) de tim chu de khop nhat. Do la nguyen ly vector database co ban!"},
+
+    // ================= [ NHÓM 6: KIẾN TRÚC IT CHUYÊN SÂU & DEVOPS ] =================
+    {"microservices monolithic architecture kien_truc he_thong", 
+     "Du an nay di theo mo hinh Microservices phan tan. Thay vi mot may chu nguyen khoi (Monolithic) cuc ky dat tien, ta ghep nhieu may chu nho, re tien lai qua mang LAN de chia se tai nguyen."},
+    
+    {"docker container image kubernetes k8s deploy", 
+     "De cai dat moi truong AI tren Worker Node ma khong so xung dot thu vien, nguoi ta dung Docker de dong goi, va dung Kubernetes (K8s) de dieu phoi hang ngan container tu dong."},
+    
+    {"devops ci_cd pipeline jenkins github_actions automation", 
+     "Trong ky nguyen hien dai, moi khi toi (tac gia) commit code len GitHub, he thong CI/CD se tu dong bien dich va kiem tra bug giup dam bao phan mem luon o trang thai an toan (Green build)."},
+    
+    {"nginx haproxy reverse_proxy proxy apache load_balancer", 
+     "Trong Web Server, Nginx hoac HAProxy lam nhiem vu can bang tai luu luong truy cap (Request Load Balancer). Con NEXTGPU cua chung ta la can bang tai tai nguyen RAM (Resource Load Balancer)."},
+    
+    {"grafana prometheus zabbix monitor log_metric", 
+     "Giao dien Live Monitor cua NEXTGPU duoc lay cam hung tu cac he thong giam sat chuyen nghiep nhu Grafana va Prometheus. Giup Admin nhin thay suc khoe toan cum bang cac bieu do."},
+    
+    {"sql database co_so_du_lieu mysql postgresql query", 
+     "Co so du lieu quan he (SQL) luu tru du lieu duoi dang bang co cau truc. NEXTGPU cung co the mo rong de ket noi voi MySQL/PostgreSQL thay vi luu tru tren file .dat nhi phan."},
+    
+    {"nosql redis mongodb cache memcached", 
+     "Redis la mot NoSQL Database luu tru truc tiep tren RAM. Thuat toan Dynamic Array Preview cua NEXTGPU co the vi nhu mot dang In-memory Cache cuc nhanh cua Redis."},
+    
+    {"rest_api json xml http get post payload", 
+     "Master Node giao tiep voi Worker Node bang cac goi tin HTTP gui duoi dang JSON. Phuong thuc POST duoc dung de lenh cho GPU nap Model, DELETE dung de huy Model AI."},
+    
+    {"firewall tuong_lua ddos attack hack vulnerability ddos", 
+     "De chong cac cuoc tan cong Tu choi dich vu (DDoS), Data Center can he thong Firewall manh me de loc bot cac goi tin rac truoc khi chung lot vao mang luoi GPU Cluster cua chung ta."},
+    
+    {"thread multi_threading da_luong dong_bo mutex deadlock", 
+     "De tranh Deadlock khi nhieu process cung doi cap phat VRAM tren 1 may chu, can phai su dung Mutex Lock (Khoa dong bo) de xep hang cac tac vu tranh gianh bo nho."},
+    
+    {"tree graph stack queue cau_truc_du_lieu array", 
+     "Ngoai Linked List, cac he thong lon con dung cay nhi phan (Binary Tree) hoac do thi (Graph) de quan ly quan he mang luoi giua cac thiet bi phuc tap hon."},
+    
+    {"algorithm thuat_toan binary_search dfs bfs quy_hoach_dong", 
+     "Thuat toan la cot loi cua Khoa hoc May tinh. Binary Search giup tim kiem O(log n), con BFS/DFS dung de duyet do thi mang luoi cac may chu ve tinh."},
+    
+    {"html css javascript react vue frontend ui_ux web", 
+     "Trong tuong lai, loi C Backend cua NEXTGPU se duoc xay dung them 1 lop API de ket noi voi Giao dien Web viet bang ReactJS/VueJS, giup quan tri vien su dung tren trinh duyet."},
+    
+    {"backend nodejs python java golang server_side", 
+     "Tuy C cuc ky manh me ve xu ly phan cung, nhung de phat trien nhanh cac API web, ky su thuong dung Golang hoac NodeJS de viet lop dieu phoi API trung gian."},
+    
+    {"git commit push pull merge conflict branch", 
+     "Git la cong cu quan ly phien ban ma bat ky ky su nao cung phai nam. Lenh git branch giup phat trien tinh nang moi ma khong lam hong nhanh main. Git merge dung de gop code tro lai."},
+    
+    {"agile scrum sprint task jira board project_management", 
+     "Mo hinh quan ly du an Agile giup doi Nhom IT phan chia du an khong lo thanh cac Sprints ngan 2 tuan. Giup tung buoc hoan thien tung module cua NEXTGPU."},
+    
+    {"test qa unit_test bug_report automation_test", 
+     "De he thong khong bi crash, cac ky su QA can viet cac Unit Test de ban pha thu vao cac ham addServer, deleteServer, thu xem he thong co bat loi vung nho hay khong."},
+    
+    {"rsa aes hash md5 sha256 cryptography", 
+     "Ngoai ma hoa XOR, he thong cong nghiep se dung ma hoa bat doi xung RSA hoac bam SHA-256 de dam bao tuyet mat danh tinh cua tung Worker Node khi tham gia vao mang."},
+    
+    {"big_data hadoop spark data_warehouse pipeline", 
+     "Truoc khi huan luyen AI, nguoi ta phai dung cac he thong Big Data nhu Apache Spark de xu ly loc hang Terabyte du lieu tho (Data Pipeline) lam sach cho AI an."},
+    
+    {"tuong_lai phat_trien roadmap update phien_ban_moi", 
+     "Ban do phat trien (Roadmap) cua NEXTGPU la tro thanh mot Cloud Control Panel thu thiet. Tich hop thu vien libcurl de goi API thuc te, ket noi voi phan cung thuc the qua LAN/Wifi."}
 };
-int chat_db_size = 22;
+
+int chat_db_size = 50;
 
 void interactWithModel(ServerNode** head_ref) {
     printf("\033[H\033[J");
@@ -491,15 +579,28 @@ void interactWithModel(ServerNode** head_ref) {
         
         int scores[50] = {0}; 
         char temp_input[300]; strcpy(temp_input, input_lower);
-        char* word = strtok(temp_input, " ,.?!");
+        // Tách từ triệt để hơn bằng cả tab và xuống dòng
+        char* word = strtok(temp_input, " ,.?!\n\t"); 
         
         while (word != NULL) {
-            if (strlen(word) > 1) { 
+            // Sửa lại thành > 0 để AI có thể hiểu các từ khóa 1 chữ cái như ngôn ngữ "C"
+            if (strlen(word) > 0) { 
                 for (int i = 0; i < chat_db_size; i++) { 
-                    if (strstr(chat_db[i].keywords, word)) scores[i] += 5; 
+                    // [!] KỸ THUẬT EXACT MATCH: Bọc khoảng trắng 2 đầu
+                    char padded_keywords[300];
+                    char padded_word[100];
+                    sprintf(padded_keywords, " %s ", chat_db[i].keywords);
+                    sprintf(padded_word, " %s ", word);
+
+                    if (strstr(padded_keywords, padded_word) != NULL) {
+                        // Trọng số thông minh (Weighted Score): Từ càng dài, điểm càng cao
+                        if (strlen(word) >= 5) scores[i] += 15; 
+                        else if (strlen(word) >= 3) scores[i] += 10;
+                        else scores[i] += 5;
+                    }
                 }
             }
-            word = strtok(NULL, " ,.?!");
+            word = strtok(NULL, " ,.?!\n\t");
         }
 
         int best_match_idx = -1; int max_score = 0;
@@ -508,11 +609,12 @@ void interactWithModel(ServerNode** head_ref) {
         }
 
         clock_t start_infer = clock();
-        if (best_match_idx != -1) typewriter_box(chat_db[best_match_idx].answer, MAGENTA, 74);
-        else {
-            char default_ans[500];
-            sprintf(default_ans, "Du lieu thoi gian thuc tren Internet khong co ket qua khop voi mo ta '%s' cua ban. Hay thu hoi cac chu de lien quan den thuat toan C, VRAM, AI hay link github nhe.", input);
-            typewriter_box(default_ans, MAGENTA, 74);
+        
+        // [!] NGƯỠNG ĐIỂM (THRESHOLD): Phải đủ điểm mới trả lời, chống đoán mò
+        if (best_match_idx != -1 && max_score >= 10) { 
+            typewriter_box(chat_db[best_match_idx].answer, MAGENTA, 74);
+        } else {
+            typewriter_box("Xin lỗi, tôi chưa hiểu rõ ý bạn. Hãy thử dùng các từ khóa kỹ thuật cụ thể hơn (VD: vram, thuat toan, github, ma hoa, can bang tai).", MAGENTA, 74);
         }
         
         clock_t end_infer = clock();
@@ -528,49 +630,157 @@ void interactWithModel(ServerNode** head_ref) {
 // CON AI SO 2: KNOWLEDGE DATA SEGMENT (MANG KHONG LO CHO COPILOT ADMIN)
 // =====================================================================
 Knowledge copilot_db[] = {
-    {"ham addserver them may chu gpu_model api_endpoint strcpy", 
-     "=== KIEN TRUC HAM void addServer() ===\n- Vi tri: Thuoc tap tin 'src/server_list.c'.\n- Logic code: Ham nhan vao con tro cap 2 (ServerNode** head) de co the cap nhat truc tiep vao head. Dung 'malloc(sizeof(ServerNode))' xin RAM tren Heap tao Node moi. Sau do dung 'strcpy()' gan chuoi String vao Struct an toan. Vong lap while(temp->next != NULL) di tim duoi cua danh sach de noi Node nay vao cuoi cung."},
+    // ================= [ NHÓM 1: CÁC HÀM QUẢN LÝ NODE (CRUD) ] =================
+    {"addserver add_server them_may_chu strcpy provision", 
+     "=== KIEN TRUC HAM void addServer() ===\n- Cap phat dong: Dung malloc(sizeof(ServerNode)) de mo vung RAM tren Heap.\n- Copy chuoi an toan: Dung strcpy() de gan Model va API Endpoint.\n- Tail Insertion: Vong lap while(temp->next != NULL) di tim diem cuoi cung cua danh sach roi be nhanh con tro next de noi may chu moi vao mang luoi."},
     
-    {"ham deleteserver xoa may chu prev temp free", 
-     "=== KIEN TRUC HAM void deleteServer() ===\n- Ky thuat: Dung giai thuat 2 con tro: 'temp' di truoc va 'prev' di kem phia sau. Neu may chu can xoa nam ngay dau (head), tro head qua node tiep theo roi free(temp). Neu no nam giua, khi quet thay, ta thao tac: prev->next = temp->next de nhay coc qua no, roi goi free(temp) de chong memory leak!"},
+    {"deleteserver delete_server xoa_may_chu deprovision free prev", 
+     "=== KIEN TRUC HAM void deleteServer() ===\n- Thuat toan: Dung 2 con tro song hanh (temp di truoc, prev di sau).\n- Logic be xich: prev->next = temp->next giup nhay coc qua node bi xoa, giu lien ket mang.\n- Memory: Goi lenh free(temp) de tra RAM cho OS, triet tieu hoan toan Memory Leak!"},
     
-    {"ham displayservers dashboard live monitor in bang printf", 
-     "=== KIEN TRUC HAM void displayServers() ===\n- Pha 1: Duyet toan mang de thong ke so luong Online/Offline va tong VRAM. Hien thi vao the Header.\n- Pha 2: Dung format chuoi '%-20s' trong printf de ep chuoi can trai hoac dung thanh ngang '|' thang tap tuc thi du cho ten model GPU ngan dai ra sao. Thiet ke thanh '[####.....]' bang thuat toan toan hoc (vram_used*100/vram_total) nhan cheo voi chieu dai max bar."},
+    {"displayservers display_servers live_monitor in_bang format_string", 
+     "=== KIEN TRUC HAM void displayServers() ===\n- Hien thi bang: Dung format chuoi '%-20s' de ep chuoi can trai thang tap.\n- Ve bieu do VRAM: Ap dung cong thuc (vram_used * 100 / vram_total) nhan cheo voi chieu dai max_bar (10) de ve ra cac dau '#' truc quan, the hien tai nguyen hien tai."},
     
-    {"ham sortserversbyvram sap xep bubble sort swap", 
-     "=== KIEN TRUC HAM void sortServersByVRAM() ===\n- Thuat toan can ban: Su dung Bubble Sort (Sap xep noi bot) tren danh sach lien ket.\n- Ky thuat an diem: Viec dao cho (swap pointer) cac con tro tren Linked List rat nguy hiem de mat root. Code nay khon ngoan hon, dung cac bien 'temp_id', 'temp_model' luu tru data tam thoi de doi data ben trong 2 node dang so sanh cho nhau chu khong he dung cham vao cac soi xich con tro."},
+    {"sortserversbyvram sort_servers bubble_sort sap_xep hoan_doi", 
+     "=== KIEN TRUC HAM void sortServersByVRAM() ===\n- Thuat toan: Bubble Sort (Noi bot) giup day cac may chu VRAM khung nhat len dau.\n- An toan con tro: Khong doi vi tri con tro (pointer swap) de tranh dut xich. Ham chi lay cac bien 'temp_model', 'temp_vtotal' hoan doi Data Payload ben trong cac Node voi nhau."},
     
-    {"ham toggleserverstatus bao tri online offline", 
-     "=== KIEN TRUC HAM void toggleServerStatus() ===\n- Chuc nang: Dao trang thai may chu Online hoac Offline.\n- Logic code: Su dung phep toan ba ngoi sieu toc do 'temp->status = (temp->status == 1) ? 0 : 1;'. Neu server bi an Offline, he thong Load Balancing se lap tuc bo qua no trong viec cap phat VRAM AI sau do."},
+    {"toggleserverstatus toggle_status bao_tri online offline toan_tu_ba_ngoi", 
+     "=== KIEN TRUC HAM void toggleServerStatus() ===\n- Cong tac bit: Thay vi if-else, ham dung toan tu ba ngoi 'temp->status = (temp->status == 1) ? 0 : 1;' de lat trang thai.\n- Tac dung: Node bi Offline se lap tuc bi thuat toan Cân Bằng Tải bo qua."},
     
-    {"ham freelist don rac memory leak thoat chuong trinh", 
-     "=== KIEN TRUC HAM void freeList() ===\n- Khi nguoi dung an 0 de thoat, ham nay bat buoc phai chay de xoa danh sach lien ket khoi RAM he dieu hanh.\n- Ky thuat: Dung vong lap quet. Neu ban goi free(current) truoc khi current=current->next thi ban se mat luon doan day duoi. Nen phai gan ServerNode* temp = current, tien current len 1 buoc, roi moi free(temp) an toan tuyet doi."},
+    {"freelist free_list don_rac memory_leak dọn_dẹp exit", 
+     "=== KIEN TRUC HAM void freeList() ===\n- Kich hoat: Khi user thoat chuong trinh.\n- Thuat toan: Vong lap quet, luu node hien tai vao 'temp', day 'head' len node ke tiep, roi moi free(temp). Tuyet doi khong free() truoc khi day con tro de tranh mat dau day chuyen."},
+
+    // ================= [ NHÓM 2: CÁC HÀM AI & TENSOR PARALLELISM ] =================
+    {"deployaimodel deploy_ai can_bang_tai tensor_parallelism preview", 
+     "=== KIEN TRUC HAM void deployAIModel() ===\n- Phan tan AI: Quet mang, neu 1 may khong ganh noi, he thong se be nho AI.\n- Safe Commit: Dung malloc/calloc tao 3 mang ao (p_nodes, p_alloc, p_free) de chay nhap Preview. Chi khi Admin nhan so 1 (Confirm), data moi duoc map vao RAM chinh thuc. Chuan kien truc Enterprise!"},
     
-    {"ham deployaimodel can bang tai tensor parallelism single-node p_nodes p_alloc", 
-     "=== KIEN TRUC HAM void deployAIModel() ===\n- Ham nay the hien tuyet ky Cloud Architecture. No quet toan bo mang xem tong VRAM co du khong.\n- Neu co may chu du tai doc lap, uu tien Single-Node cap luon.\n- Neu khong, bat Tensor Parallelism. Ham dung lenh 'malloc()' de tao ra 3 mang dong tam thoi (p_nodes, p_alloc, p_free) de luu ban nhap phan bo VRAM vao do, roi in Preview cho Quan tri vien. Khi ban xac nhan (Confirm), no moi the hien buoc p_nodes[i]->vram_used += p_alloc[i] vao DB chinh thuc. Dang cap nhat code la day!"},
+    {"undeployaimodel undeploy_ai go_bo_ai giai_phong_vram thu_hoi", 
+     "=== KIEN TRUC HAM void undeployAIModel() ===\n- Logic: Duyet qua cac node, kiem tra (vram_used > 0) thi ep temp->vram_used = 0.\n- Tac dung: Zero-downtime, gop phan tra lai 100% trang thai ranh roi cho GPU ma khong can phai reset may chu."},
     
-    {"ham interactwithmodel ai chat terminal chatbot inference db keywords", 
-     "=== KIEN TRUC HAM void interactWithModel() ===\n- Ban dang tan huong thanh qua cua ham nay day! Ham dung vong lap thoi gian thuc, dung fgets() de lay input cua user. Su dung ham strtok() de bam nho cau thanh tung tu.\n- Thuat toan Scoring: Cong don diem tuc thi (scores[i]++) neu keyword cua user ton tai trong db[i].keywords. Model nao diem max thi tuon answer cua model do ra bang ham typewriter. Vua thong minh vua don gian bang nguyen li Accumulator."},
+    {"interactwithmodel interact chatbot nlp scoring_logic intent", 
+     "=== KIEN TRUC HAM void interactWithModel() ===\n- NLP Lõi: Bam input bang strtok(), quet mang chat_db[]. Nhuom diem (scores[i]++) cho keyword trung khop bang strstr().\n- Xuat: Tra ve cau tra loi cua chu de dat Max Score qua ham typewriter, mo phong kien truc Vector Database."},
     
-    {"ham encryptdecrypt ma hoa xor cipher file_io", 
-     "=== KIEN TRUC HAM void encryptDecrypt() ===\n- Ma hoa XOR co tinh doi xung: A XOR B XOR B = A.\n- Trong C, ta dung vong lap for de duyet tung ky tu cua 'char* data' va cho 'data[i] ^= SECRET_KEY' (voi SECRET_KEY = 0x5A). Code goi ham nay truoc khi luu file va goi lai ham nay ngay sau khi doc file de bien rac thanh data chuan."},
+    {"interactwithcopilot copilot assistant chuyen_gia_code bách_khoa", 
+     "=== KIEN TRUC HAM void interactWithCopilot() ===\n- Day chinh la bo nao cua toi! \n- Su dung thuat toan Exact Match: Boc khoang trang 2 dau chuoi de tranh nhan dien sai tu khoa. Uu tien trong so (Weighted Score) cao cho cac Tu khoa dai la ten Ham."},
     
-    {"ham loadfromfile doc file fread saveToFile luu", 
-     "=== KIEN TRUC HAM luu va doc file ===\n- Su dung fread() va fwrite() tren file che do 'rb' va 'wb' (Read/Write Binary).\n- Bi quyet o day la dung mot bien 'ServerNode tempNode' trung gian de doc. Roi goi truc tiep ham addServer() do toan bo data do vao lai kien truc Linked List dang chay tren RAM chu khong xai con tro ep kieu cuc doan."},
+    {"typewriter_box typewriter word_wrap khung_chat delay putchar", 
+     "=== KIEN TRUC HAM void typewriter_box() ===\n- Thuat toan Word-Wrap: Tinh truoc do dai cua tu (word_len). Neu chieu dai dong vuot qua bien do 74, tu dong in '\\n' va ve them vach '|' de chong vo khung giao dien.\n- Hieu ung: Dung putchar() + delay() tao cam giac AI dang render chu."},
+
+    // ================= [ NHÓM 3: BẢO MẬT & FILE I/O ] =================
+    {"encryptdecrypt encrypt decrypt xor_cipher ma_hoa binary", 
+     "=== KIEN TRUC HAM void encryptDecrypt() ===\n- Phep toan Bitwise: data[i] ^= SECRET_KEY (0x5A).\n- Tinh doi xung: Phep toan nay khong can ham giai ma rieng. Chay lan 1 la ma hoa (bien thanh rac), chay lan 2 tren mang rac se tra ve data chuan. Toc do sieu toc O(1)."},
     
-    {"ham showbootscreen khoi dong logo gpu quat quay hieu ung dong", 
-     "=== KIEN TRUC HAM void showBootScreen() ===\n- Hieu ung hoat hoa duoc xay dung bang file main.c.\n- Su dung vong lap for(12), dung lenh '\\033[H' de day con tro ban phim len dau man hinh, roi in chong (overwrite) cac frame cua Card GPU lech canh quat (i%4==0,1,2,3). Fflush ep buffer render ngay tuc thi tao ra canh quat dang quay tron phia tren chu NEXTGPU."},
+    {"savetofile save_to_file luu_file fwrite wb binary_write", 
+     "=== KIEN TRUC HAM void saveToFile() ===\n- Ghi Nhi phan: Mo file che do 'wb'.\n- Truoc khi ghi struct bang fwrite(), he thong goi ham encryptDecrypt() de xao bit nham bao ve IP Data Center, sau do moi luu xuong o cung. OS se khong the doc duoc text."},
     
-    {"ham interactivemenu tui _getch mui ten", 
-     "=== KIEN TRUC HAM int interactiveMenu() ===\n- Xay dung menu khong xai phim enter. Kich hoat '_getch()' cua thu vien windows. Khi an mui ten, ban phim tra ra 2 byte ma (224 roi 72 hoac 80).\n- Ham se cong hoac tru index bien 'selected'. Vong lap quet cac options, neu i == selected, in mau '\\033[47m\\033[30m' tao highlight dep mat."},
+    {"loadfromfile load_from_file doc_file fread rb binary_read", 
+     "=== KIEN TRUC HAM void loadFromFile() ===\n- Doc Nhi phan: Mo file che do 'rb'. \n- Kien truc an toan: Khong ep kieu con tro truc tiep vao RAM ma dung bien 'ServerNode tempNode' doc do roi goi ham addServer() nap lai data vao Linked List mot cach sach se."},
     
-    {"github link source code repository github.com", 
-     "Toan bo Source Code sieu viet nay thuoc ve tac gia hoquan2007 tren GitHub. Ban co the check tung dong ma tai link nay: https://github.com/hoquan2007/GPU-Server-Manager"},
+    {"exporttocsv export_csv xuat_excel baocao_gpu fprintf csv", 
+     "=== KIEN TRUC HAM void exportToCSV() ===\n- Xuat van ban: Mo che do 'w' tao file .csv.\n- Dinh dang: Dung fprintf de noi cac truong data bang dau phay (comma-separated). Hoan hao de import vao cac phan mem nhu Excel/PowerBI ke ve bieu do."},
+
+    // ================= [ NHÓM 4: CHIẾN LƯỢC TENSOR (ALGORITHMS) ] =================
+    {"greedy_algorithm greedy tham_lam binpacking don_tai", 
+     "=== THUAT TOAN TENSOR: GREEDY ===\n- Nhoi can kiet VRAM cua may dang xet cho den khi dat 100% moi tran qua may tiep theo. Day la kieu Bin-packing giup gom tai nguyen, tiet kiem dien nang Data Center."},
     
-    {"main while kbhit difftime", 
-     "=== KIEN TRUC HAM main() ===\n- Core OS cua phan mem. Chay 1 vong lap while(1) vo han de giu chuong trinh hien huu. Tinh nang Live Monitor dung ham _kbhit() non-blocking de vua in du lieu lien tuc tren man hinh, vua lang nghe ban phim, the hien trinh do da luong ao tren ngon ngu tuyen tinh C."}
+    {"balanced_algorithm balanced round_robin san_tai thermal", 
+     "=== THUAT TOAN TENSOR: BALANCED ===\n- Ung dung Round-Robin: Moi vong lap chi chia dung 1GB VRAM cho moi Node, xoay vong khong ngung. Muc dich la tan nhiet deu tren tat ca phan cung (Anti-Thermal Throttling)."},
+    
+    {"custom_algorithm custom thu_cong tay_bo_ram allocation", 
+     "=== THUAT TOAN TENSOR: CUSTOM ===\n- Vong lap tuong tac mo: Cho phep Admin go so RAM muon cap cho tung may chu (toi da bang VRAM Free cua may do) cho den khi du tai. Dung cho ha tang thiet bi khong dong bo (May yeu may manh)."},
+
+    // ================= [ NHÓM 5: UI/UX & SYSTEM KERNEL ] =================
+    {"showbootscreen boot_screen hieu_ung khoi_dong quat_quay", 
+     "=== KIEN TRUC HAM void showBootScreen() ===\n- Animation Console: Vong lap quet (i%4) de chon frame cua canh quat GPU lenh goc. Lenh ANSI '\\033[H' de dời con trỏ ve goc ma khong xoa man hinh, tao hieu ung quat dang quay tren man hinh thue cua hacker!"},
+    
+    {"interactivemenu interactive_menu tui menu _getch phim_mui_ten", 
+     "=== KIEN TRUC HAM int interactiveMenu() ===\n- Dung _getch() lang nghe keyboard khong hien thi echo. Phim mui ten tra ve 2 byte (224, sau do 72 Up/80 Down). Tinh toan bien 'selected' ket hop ma doi mau de highlight dong Menu."},
+    
+    {"printheader print_header ascii_art logo tieu_de", 
+     "=== KIEN TRUC HAM void printHeader() ===\n- Chuc nang in Logo NEXTGPU PRO bang ma ASCII Art tao diem nhan thi giac cho giao dien TUI, dong thoi set font mau Cyan (Xanh ngoc) chuan Cyberpunk."},
+    
+    {"main while_loop core _kbhit non_blocking", 
+     "=== KIEN TRUC HAM main() ===\n- Core cua toan bo phan mem. Chay vong lap vo han while(1). Dac biet khi vao Menu 1 (Live Monitor), dung _kbhit() de duy tri vong lap in thong so trong khi van cho phep thoat ra khi nhan phim bat ky."},
+
+    // ================= [ NHÓM 6: GIẢI MÃ CÁC LỆNH/TỪ KHÓA C CẤP THẤP ] =================
+    {"malloc memory_allocation dong cap_phat heap", 
+     "=== TU KHOA C: malloc() ===\n- Memory Allocation: Xin OS cap cho mot vung RAM tren Heap. Khac voi array tinh, malloc giup mang luoi Server mo rong toi vo han vao thoi diem Runtime ma khong so tran bo nho stack."},
+    
+    {"calloc clear_allocation mang_dong cap_phat", 
+     "=== TU KHOA C: calloc() ===\n- Tuong tu malloc nhung calloc se tu dong don sach vung nho va set gia tri ve 0. Trong NEXTGPU, calloc duoc dung de tao mang 'p_alloc' ghi nho tam thoi VRAM phan bo cua Tensor Parallelism."},
+    
+    {"free giai_phong_ram clear_memory memory_leak", 
+     "=== TU KHOA C: free() ===\n- Mua hang thi phai tra tien, malloc roi thi phai free(). Xoa vung nho do malloc tao ra, neu khong the tich RAM se tang dan gay tran RAM OS (Memory Leak)."},
+    
+    {"struct servernode typedef cau_truc_du_lieu", 
+     "=== TU KHOA C: struct ServerNode ===\n- Day la vien gach xay dung he thong. No gom: id, status, model, vram_total, vram_used, api_endpoint va dac biet la '*next' (con tro lien ket) de moc noi voi vien gach ke tiep."},
+    
+    {"_kbhit keyboard_hit lang_nghe asyn input", 
+     "=== TU KHOA C: _kbhit() ===\n- Kiem tra xem co phim nao dang doi trong bo dem ban phim khong. Tra ve 1 neu co. Giup chuong trinh C khong bi 'dung hinh' cho nhap lieu nhu scanf, tao tien de lam Live Dashboard."},
+    
+    {"_getch get_char no_echo an_ky_tu", 
+     "=== TU KHOA C: _getch() ===\n- Doc ngay 1 ky tu tu ban phim ma khong can an Enter, cung KHONG in ky tu do ra man hinh (No-echo). Hoan hao de xay dung menu dieu huong bang mui ten."},
+    
+    {"fflush stdout flush clear_buffer rendering", 
+     "=== TU KHOA C: fflush(stdout) ===\n- He dieu hanh thuong luu chu trong Buffer truoc khi in ra man hinh. fflush buoc OS phai 'non' toan bo chu do ra man hinh ngay lap tuc. Giup UI khong bi giat hoac bi pending text."},
+    
+    {"ansi_escape ansi \\033[h \\033[j clear_screen system_cls", 
+     "=== MA DIEU KHIEN: ANSI ESCAPE ===\n- '\\033[H' dua con tro len dong (0,0).\n- '\\033[J' xoa tu con tro xuong duoi.\n- Chung loai bo lenh system('cls') gay soc I/O va giat man hinh (Flickering), day TUI len canh gioi 60FPS."},
+    
+    {"strcpy strncpy string_copy sao_chep_chuoi", 
+     "=== TU KHOA C: strcpy() ===\n- String Copy: Chep chuoi tu src sang dest. Kien truc C khong the gan chuoi bang dau '='. Ta dung strcpy de copy ten Model AI tu bien tam vao ben trong Struct cua Linked List."},
+    
+    {"sprintf snprintf format string format_string", 
+     "=== TU KHOA C: sprintf() ===\n- String Print Format: Thay vi in ra man hinh, no the ghep cac bien vao 1 doan Text roi luu doan text do vao 1 chuoi (Array char). NEXTGPU dung no de sinh Auto IP: sprintf(api, \"http://192.168.1.%d\", id);"},
+    
+    {"strstr string_string tim_chuoi search", 
+     "=== TU KHOA C: strstr() ===\n- Tim chuoi con nam trong chuoi me. Day la loi cua Động cơ NLP cham diem. No quet xem tu khoa cua User co nam ben trong database khong. De lam NLP chuan, ta thuong phai boc them khoang trang 2 dau."},
+    
+    {"strtok string_token bam_chuoi tokenizer split", 
+     "=== TU KHOA C: strtok() ===\n- String Tokenizer: Con dao thai thit! No bam mot cau van dai thanh cac tu don (Token) dua tren cac ky tu phan cach (Space, dau phay, dau cham). Kien truc cot loi cua Trí tuệ nhân tạo mảng NLP."},
+    
+    {"fopen fclose doc_file luu_file io", 
+     "=== TU KHOA C: fopen() ===\n- File Open: Mo luong (Stream) ket noi giua RAM va O cung (Disk). Mo xong bat buoc phai dung fclose() de dong lai, neu khong du lieu se nam vinh vien trong the kẹt."},
+    
+    {"rb wb w che_do_file file_mode", 
+     "=== TU KHOA C: File Modes ===\n- 'rb': Read Binary (Doc nhi phan)\n- 'wb': Write Binary (Ghi nhi phan)\n- 'w': Write Text (Ghi van ban thong thuong, dung cho xuat file CSV)."},
+    
+    {"fread fwrite doc_nhi_phan ghi_nhi_phan", 
+     "=== TU KHOA C: fread() & fwrite() ===\n- Luu hoac doc truc tiep mot Block Memory (VD: Toan bo cai struct) xuong o cung ma khong can chuyen the sang chuoi Text. Toc do kinh hoang, bao mat cao!"},
+    
+    {"fprintf file_print xuat_file in_file csv", 
+     "=== TU KHOA C: fprintf() ===\n- Giong chuc nang printf (in ra man hinh), nhung thay vi man hinh, no ban chuoi format do xuyen truc tiep vao trong File Text tren o cung."},
+    
+    {"difftime time time_h tinh_gio uptime", 
+     "=== TU KHOA C: difftime() ===\n- Tru thoi gian. Tru di thoi diem (start_time) luc khoi dong chuong trinh so voi thoi diem hien tai de ra duoc so giay Uptime tren bang dieu khien cua Data Center."},
+    
+    {"clock clock_t delay mili_giay sleep", 
+     "=== TU KHOA C: clock() ===\n- Dem so xung nhiem CPU (Clock ticks). Ham delay() cua he thong dung vong lap while kiem tra clock() nham treo CPU mot khoang mili-giay, giup mo phong hieu ung nhả chu hoac Loading Bar."},
+
+    // ================= [ NHÓM 7: KIẾN TRÚC IT VÀ KHÁI NIỆM ] =================
+    {"memory_leak tran_bo_nho ro_ri mem_leak", 
+     "=== KHAI NIEM: Memory Leak ===\n- Loi nguy hiem nhat trong C/C++. La hien tuong cap phat dong nhung quen giai phong. Server the chay thieu RAM dan roi BSoD. NEXTGPU giai quyet bang lenh freeList() chat che!"},
+    
+    {"buffer_overflow tran_bo_dem array_out_of_bounds", 
+     "=== KHAI NIEM: Buffer Overflow ===\n- Ban khai bao mang 100 ky tu nhung luu 200 ky tu. Du lieu se tran vao vung RAM khac gay crash hoac tao lo hong de Hacker tan cong (Smashing the stack)."},
+    
+    {"pointer con_tro dereference dia_chi reference", 
+     "=== KHAI NIEM: Pointer (*) ===\n- Kien truc sieu pham cua C. No khong luu data, no luu 'Dia chi' cua data tren RAM. Thay vi copy mot thu muc 10GB, ta chi can chi cho OS biet thu muc do nam o dau (truyen tham chieu)."},
+    
+    {"github link source_code ma_nguon repo repository author tac_gia hoquan2007", 
+     "=== AUTHOR INFO & OPEN SOURCE ===\n- Kien truc ma nguon cua NEXTGPU PRO thuoc ve nha phat trien hoquan2007.\n- Toan bo du an duoc minh bach hoa (Open Source). Ban co the kiem chung tung dong code C va xem cac commit tai Repository chinh thuc: https://github.com/hoquan2007/GPU-Server-Manager"},
+    {"two_pointer hai_con_tro song_hanh prev_temp", 
+     "=== THUAT TOAN: Two-Pointer ===\n- Giai thuat dung 2 con tro duyet mang/chuoi. Trong xoa Node, 'temp' chay ra phia truoc tim muc tieu, 'prev' dung lai phia sau de cho san noi day xich giup Node khong bi đứt."},
+    
+    {"color mau_sac ansi_color cyan magenta", 
+     "=== UI: ANSI Colors ===\n- He thong ho_tro render the he mau cua Cyberpunk (Cyan, Magenta, Yellow, Green, Red) qua cac ma Hex. Giup giam bot su kho khan cua Terminal truyen thong."},
+    
+    {"zero_downtime tinh_san_sang failover kien_truc", 
+     "=== KHAI NIEM: Zero-Downtime ===\n- Toan bo ham xoa, bao tri hay gỡ bo AI cua NEXTGPU duoc thiet ke de khong phai Stop cac may khac. He thong luon tra ve trang thai song 24/7."},
+     {"ai_tao_ra tao_ra_ban phat_trien nhom_it_utc2 dev coder tac_gia sinh_vien", 
+     "=== TEAM IT UTC2 ===\n- Toi duoc thiet ke, xay dung va toi uu hoa kien truc boi nhom IT UTC2.\n- Nhom phat trien gom 4 thanh vien:\n  1. Ho Ngoc Quan\n  2. Nguyen Thanh Phong\n  3. Nguyen Thanh Phong\n  4. Nguyen Giang Tuong"}
 };
-int copilot_db_size = 14;
+
+int copilot_db_size = 51;
 
 void nextgpuCopilot(ServerNode** head_ref) {
     char input[300]; char input_lower[300];
@@ -655,28 +865,53 @@ void nextgpuCopilot(ServerNode** head_ref) {
         }
         else {
             int scores[50] = {0}; 
-            char temp_input[300]; strcpy(temp_input, input_lower);
-            char* word = strtok(temp_input, " ,.?!");
-            
-            while (word != NULL) {
-                if (strlen(word) > 1) { 
-                    for (int i = 0; i < copilot_db_size; i++) { 
-                        if (strstr(copilot_db[i].keywords, word)) scores[i] += 5; 
+        char temp_input[300]; 
+        strcpy(temp_input, input_lower);
+        
+        // Băm nhỏ câu hỏi của người dùng
+        char* word = strtok(temp_input, " ,.?!\n\t"); 
+        
+        while (word != NULL) {
+            if (strlen(word) > 0) { 
+                for (int i = 0; i < copilot_db_size; i++) { 
+                    // [!] KỸ THUẬT EXACT MATCH: Bọc khoảng trắng để tìm chính xác hàm/từ khóa
+                    char padded_keywords[500];
+                    char padded_word[100];
+                    sprintf(padded_keywords, " %s ", copilot_db[i].keywords);
+                    sprintf(padded_word, " %s ", word);
+
+                    if (strstr(padded_keywords, padded_word) != NULL) {
+                        // Trọng số (Weighted Score): Ưu tiên các tên hàm/biến dài
+                        if (strlen(word) >= 8) scores[i] += 20;      // VD: addServer, undeployAIModel
+                        else if (strlen(word) >= 5) scores[i] += 15; // VD: malloc, vram
+                        else if (strlen(word) >= 3) scores[i] += 10; // VD: ram, gpu
+                        else scores[i] += 5;                         // VD: c, if
                     }
                 }
-                word = strtok(NULL, " ,.?!");
             }
+            word = strtok(NULL, " ,.?!\n\t");
+        }
 
-            int best_match_idx = -1; int max_score = 0;
-            for(int i = 0; i < copilot_db_size; i++) {
-                if(scores[i] > max_score) { max_score = scores[i]; best_match_idx = i; }
+        // Tìm chủ đề (hàm/tính năng) có điểm cao nhất
+        int best_match_idx = -1; 
+        int max_score = 0;
+        for(int i = 0; i < copilot_db_size; i++) {
+            if(scores[i] > max_score) { 
+                max_score = scores[i]; 
+                best_match_idx = i; 
             }
+        }
 
-            if (best_match_idx != -1) {
-                typewriter_box(copilot_db[best_match_idx].answer, MAGENTA, 74);
-            } else {
-                typewriter_box("Lenh cua ban chua hop le hoac nam ngoai kha nang ho tro cua toi. Lenh he thong: 'them may chu', 'xoa may chu', 'trien khai', 'sap xep'. Giai thich code: hay go 'ham addserver', 'ham deleteserver', 'thuat toan can bang tai', 'ma hoa xor', 'hieu ung dong', 'link github', v.v.", MAGENTA, 74);
-            }
+        clock_t start_infer = clock();
+        
+        // [!] NGƯỠNG ĐIỂM (THRESHOLD): Copilot cần độ chính xác cao hơn, set ngưỡng là 10
+        if (best_match_idx != -1 && max_score >= 10) { 
+            // Dùng màu CYAN (Xanh ngọc) để phân biệt Copilot với Chatbot (Màu Tím)
+            typewriter_box(copilot_db[best_match_idx].answer, CYAN, 74);
+        } else {
+            // Câu từ chối (Fallback) mang đậm chất Kỹ thuật
+            typewriter_box("NEXTGPU Copilot: Toi chua tim thay ham hoac thuat toan ban dang hoi. Vui long nhap chinh xac ten ham (VD: addServer, deleteServer, malloc) hoac ten tinh nang de toi giai thich chi tiet ma nguon.", CYAN, 74);
+        }
             printf(MAGENTA "    +----------------------------------------------------------------------------+\n" RESET);
         }
     }

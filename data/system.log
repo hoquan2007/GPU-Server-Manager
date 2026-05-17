@@ -66,3 +66,27 @@
 [2026-05-16 23:49:07] SYSTEM: Nguoi dung khoi dong he thong NEXTGPU PRO.
 [2026-05-16 23:51:46] SYSTEM: Da xuat bao cao tai chinh ra file CSV.
 [2026-05-16 23:51:52] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.
+[2026-05-17 10:37:25] SYSTEM: Nguoi dung khoi dong he thong NEXTGPU PRO.
+[2026-05-17 10:50:54] SYSTEM: Nguoi dung khoi dong he thong NEXTGPU PRO.
+[2026-05-17 10:52:50] INFO: Thiet lap may chu moi ID 100120 (Model: RTX 5090, VRAM: 64GB).
+[2026-05-17 10:58:44] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.
+[2026-05-17 11:07:46] SYSTEM: Da xuat bao cao tai chinh ra file CSV.
+[2026-05-17 11:31:31] ACTION: Thuc thi lenh Trien khai Model Qwen 3.6 (Yeu cau 12 GB VRAM).
+[2026-05-17 12:01:42] SYSTEM: Nguoi dung khoi dong he thong NEXTGPU PRO.
+[2026-05-17 12:02:27] ACTION: Giai phong VRAM AI tren may chu ID 100101.
+[2026-05-17 12:02:35] ACTION: Giai phong VRAM AI tren may chu ID 100104.
+[2026-05-17 12:07:01] ACTION: Thuc thi lenh Trien khai Model Deepseek R1 (Yeu cau 12 GB VRAM).
+[2026-05-17 12:50:15] ACTION: Thuc thi lenh Trien khai Model Qwen 2.5  (Yeu cau 90 GB VRAM).
+[2026-05-17 12:54:32] ACTION: Giai phong VRAM AI tren may chu ID 0.
+[2026-05-17 12:54:45] ACTION: Giai phong VRAM AI tren may chu ID 100102.
+[2026-05-17 13:15:08] WARNING: Thanh ly go bo may chu ID 100102 khoi he thong.
+[2026-05-17 13:33:38] SYSTEM: Quan tri vien thuc thi thuat toan sap xep danh sach may chu.
+[2026-05-17 14:00:42] WARNING: Thay doi trang thai hoat dong may chu ID 100101.
+[2026-05-17 14:01:45] SYSTEM: Da xuat bao cao tai chinh ra file CSV.
+[2026-05-17 14:18:15] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.
+[2026-05-17 14:19:30] SYSTEM: Nguoi dung khoi dong he thong NEXTGPU PRO.
+[2026-05-17 14:19:34] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.
+[2026-05-17 15:13:23] SYSTEM: Nguoi dung khoi dong he thong NEXTGPU PRO.
+[2026-05-17 15:13:29] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.
+[2026-05-17 15:21:38] SYSTEM: Nguoi dung khoi dong he thong NEXTGPU PRO.
+[2026-05-17 15:21:41] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.

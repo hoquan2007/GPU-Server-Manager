@@ -1,15 +1,23 @@
 #include "../include/file_io.h"
-#include <time.h> // Thu vien thoi gian thuc cua C
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define SECRET_KEY 0x5A 
+
+void encryptDecrypt(char* data, int size) {
+    for (int i = 0; i < size; i++) data[i] ^= SECRET_KEY;
+}
 
 void saveToFile(ServerNode* head, const char* filename) {
     FILE* file = fopen(filename, "wb");
-    if (file == NULL) {
-        printf("\n[!] Loi: Khong the mo file %s de ghi du lieu.\n", filename);
-        return;
-    }
+    if (file == NULL) return;
     ServerNode* temp = head;
     while (temp != NULL) {
-        fwrite(temp, sizeof(ServerNode), 1, file);
+        ServerNode tempNode = *temp; 
+        tempNode.next = NULL;        
+        encryptDecrypt((char*)&tempNode, sizeof(ServerNode)); 
+        fwrite(&tempNode, sizeof(ServerNode), 1, file);
         temp = temp->next;
     }
     fclose(file);
@@ -18,15 +26,14 @@ void saveToFile(ServerNode* head, const char* filename) {
 void loadFromFile(ServerNode** head, const char* filename) {
     FILE* file = fopen(filename, "rb");
     if (file == NULL) return;
-
     ServerNode tempNode;
     while (fread(&tempNode, sizeof(ServerNode), 1, file) == 1) {
+        encryptDecrypt((char*)&tempNode, sizeof(ServerNode)); 
         addServer(head, tempNode.server_id, tempNode.gpu_model, tempNode.vram_total, tempNode.api_endpoint);
         ServerNode* current = *head;
-        while (current->next != NULL) {
-            current = current->next;
-        }
+        while (current->next != NULL) current = current->next;
         current->vram_used = tempNode.vram_used;
+        current->status = tempNode.status; 
     }
     fclose(file);
 }
@@ -34,7 +41,6 @@ void loadFromFile(ServerNode** head, const char* filename) {
 void exportToCSV(ServerNode* head, const char* filename) {
     FILE* file = fopen(filename, "w");
     if (file == NULL) return;
-
     fprintf(file, "ID,GPU Model,VRAM Total (GB),VRAM Used (GB),API Endpoint,Status\n");
     ServerNode* temp = head;
     while (temp != NULL) {
@@ -45,25 +51,16 @@ void exportToCSV(ServerNode* head, const char* filename) {
         temp = temp->next;
     }
     fclose(file);
-    printf("\n[+] THANH CONG: Da xuat bao cao ra file '%s'!\n", filename);
+    printf(GREEN "\n    [+] THANH CONG: Da xuat bao cao ra file '%s'!\n" RESET, filename);
 }
 
-// === TINH NANG MOI: GHI NHAT KY HE THONG (REAL-TIME LOGGING) ===
 void writeSystemLog(const char* message) {
-    // Mo che do "a" (Append) de ghi noi tiep vao cuoi file
     FILE* file = fopen("data/system.log", "a");
     if (file == NULL) return;
-
-    // Lay thoi gian thuc te tu may tinh
     time_t t = time(NULL);
     struct tm* tm_info = localtime(&t);
     char time_str[30];
-    
-    // Dinh dang thoi gian theo chuan Quoc te: YYYY-MM-DD HH:MM:SS
     strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", tm_info);
-
-    // Ghi thong diệp vao file
     fprintf(file, "[%s] %s\n", time_str, message);
-    
     fclose(file);
 }

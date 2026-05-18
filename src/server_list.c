@@ -614,7 +614,7 @@ void interactWithModel(ServerNode** head_ref) {
         if (best_match_idx != -1 && max_score >= 10) { 
             typewriter_box(chat_db[best_match_idx].answer, MAGENTA, 74);
         } else {
-            typewriter_box("Xin lỗi, tôi chưa hiểu rõ ý bạn. Hãy thử dùng các từ khóa kỹ thuật cụ thể hơn (VD: vram, thuat toan, github, ma hoa, can bang tai).", MAGENTA, 74);
+            typewriter_box("Xin loi, toi chua hieu ro y ban. Hay thu dung cac tu khoa ky thuat cu the hon (VD: vram, thuat toan, github, ma hoa, can bang tai).", MAGENTA, 74);
         }
         
         clock_t end_infer = clock();

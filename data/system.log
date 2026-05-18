@@ -90,3 +90,15 @@
 [2026-05-17 15:13:29] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.
 [2026-05-17 15:21:38] SYSTEM: Nguoi dung khoi dong he thong NEXTGPU PRO.
 [2026-05-17 15:21:41] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.
+[2026-05-17 16:57:06] SYSTEM: Nguoi dung khoi dong he thong NEXTGPU PRO.
+[2026-05-17 16:58:57] INFO: Thiet lap may chu moi ID 100140 (Model: RTX 5070, VRAM: 64GB).
+[2026-05-17 17:00:47] ACTION: Thuc thi lenh Trien khai Model Qwen 3.5 (Yeu cau 90 GB VRAM).
+[2026-05-17 17:01:21] ACTION: Giai phong VRAM AI tren may chu ID 100140.
+[2026-05-17 17:01:48] ACTION: Giai phong VRAM AI tren may chu ID 100101.
+[2026-05-17 17:02:13] WARNING: Thanh ly go bo may chu ID 100101 khoi he thong.
+[2026-05-17 17:02:49] SYSTEM: Quan tri vien thuc thi thuat toan sap xep danh sach may chu.
+[2026-05-17 17:03:23] WARNING: Thay doi trang thai hoat dong may chu ID 100102.
+[2026-05-17 17:03:40] SYSTEM: Da xuat bao cao tai chinh ra file CSV.
+[2026-05-17 17:05:27] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.
+[2026-05-17 17:20:26] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.
+[2026-05-17 17:31:45] SYSTEM: Quan tri vien truy cap NEXTGPU Copilot AI.
